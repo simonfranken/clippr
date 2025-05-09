@@ -28,7 +28,7 @@ public class ClipboardController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult Create(string text)
+    public ActionResult Create([FromBody] string text)
     {
         var user = _authHelper.GetUser(User);
         var content = new ClipContent(text);
