@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "C#: sway.API Debug",
+            "name": "C#: clippr.API Debug",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/sway.API/sway.API.csproj",
+            "projectPath": "${workspaceFolder}/clippr.API/clippr.API.csproj",
         }
     ]
 }
