@@ -12,4 +12,8 @@ export class ClipboardService {
   async get(): Promise<Clip[]> {
     return (await this.axios.get<Clip[]>(this.url)).data;
   }
+
+  async createText(content: string): Promise<void> {
+    return (await this.axios.post<void>(this.url, content)).data;
+  }
 }

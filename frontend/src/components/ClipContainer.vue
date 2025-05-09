@@ -2,16 +2,25 @@
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch, type PropType } from 'vue';
 import ClipCard from './ClipCard.vue';
 import type { Clip } from '@/services/dtos';
+import ClipCreateForm from './ClipCreateForm.vue';
 
 const props = defineProps({
   clips: {
     type: Array as PropType<Clip[]>,
     default: () => [],
   },
+  createForm: {
+    type: Boolean,
+    default: true,
+  },
 });
 
+defineEmits<{
+  (e: 'createClip'): void;
+}>();
+
 const sortedClips = computed(() =>
-  [...props.clips].sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt)),
+  [...props.clips].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)),
 );
 
 const container = ref();
@@ -72,10 +81,14 @@ const fillItems = async () => {
       <div class="flex gap-3">
         <div
           ref="columnElements"
-          v-for="x in columns"
+          v-for="(x, i) in columns"
           :key="x.columnIndex"
           class="grow basis-0 flex flex-col gap-3 h-min p-1"
         >
+          <ClipCreateForm
+            v-if="createForm && i == 0"
+            @submit="$emit('createClip')"
+          ></ClipCreateForm>
           <ClipCard v-for="c in x.clips" :key="`item-${c.id}`" :clip="c"></ClipCard>
         </div>
       </div>

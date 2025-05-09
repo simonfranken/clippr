@@ -8,6 +8,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use((config) => {
   const token = useUserStore().user?.access_token;
+  config.headers['Content-Type'] = 'application/json';
   if (token !== undefined) {
     config.headers.Authorization = `Bearer ${token}`;
   }

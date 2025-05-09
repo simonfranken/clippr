@@ -8,5 +8,8 @@ const clipboardStore = useClipboardStore();
 onMounted(clipboardStore.fetchClips);
 </script>
 <template>
-  <ClipContainer :clips="clipboardStore.clips"></ClipContainer>
+  <ClipContainer
+    :clips="clipboardStore.clips"
+    @create-clip="clipboardStore.fetchClips"
+  ></ClipContainer>
 </template>
