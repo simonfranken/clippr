@@ -15,4 +15,9 @@ public class UserModel
     public string GivenName { get; set; }
     public string Email { get; set; }
     public virtual List<ClipModel> Clips { get; set; } = new List<ClipModel>();
+    public void UpdateInformation(string givenName, string email)
+    {
+        GivenName = givenName;
+        Email = email;
+    }
 }

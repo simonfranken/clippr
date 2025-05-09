@@ -34,4 +34,9 @@ public class UserService : IUserService
         var user = _repository.Get(new UserWithClipsSpecification()).FirstOrDefault(x => x.Subject == subject) ?? throw new KeyNotFoundException();
         return user;
     }
+
+    public void UpdateUser(UserModel userModel)
+    {
+        _repository.Update(userModel);
+    }
 }
