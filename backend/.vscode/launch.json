@@ -5,10 +5,24 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "C#: clippr.API Debug",
-            "type": "dotnet",
-            "request": "launch",
-            "projectPath": "${workspaceFolder}/clippr.API/clippr.API.csproj",
-        }
+            "name": "Debug Docker clippr_backend",
+            "type": "coreclr",
+            "request": "attach",
+            "processName": "dotnet",
+            "pipeTransport": {
+                "pipeProgram": "docker",
+                "pipeArgs": [
+                    "exec",
+                    "-i",
+                    "clippr_backend"
+                ],
+                "debuggerPath": "/vsdbg/vsdbg",
+                "pipeCwd": "${workspaceFolder}",
+                "quoteArgs": false
+            },
+            "sourceFileMap": {
+                "/src": "${workspaceFolder}"
+            },
+        },
     ]
 }

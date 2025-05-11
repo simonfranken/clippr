@@ -1,0 +1,22 @@
+services:
+  backend_debug:
+    container_name: clippr_backend
+    build:
+      dockerfile: debug.Dockerfile
+    ports:
+      - 8080:8080
+      - 5005:5005
+    environment:
+      - ConnectionStrings__Default=Server=database;Database=clipprDb;Uid=root;
+
+  database:
+    image: mariadb
+    volumes:
+      - database:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true
+
+volumes:
+  database:
