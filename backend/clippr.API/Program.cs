@@ -9,6 +9,7 @@ using clippr.Core.User;
 using clippr.Repository;
 using clippr.Repository.Repositories;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
+using clippr.API.Background.CleanUp;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -71,6 +72,10 @@ builder.Services.AddScoped<IClipService, ClipService>();
 builder.Services.AddScoped<IRepository<UserModel>, Repository<UserModel>>();
 builder.Services.AddScoped<IRepository<ClipModel>, ClipRepository>();
 builder.Services.AddScoped<IAuthenticationHelper, AuthenticationHelper>();
+
+builder.Services.AddHostedService<CleanupService>();
+
+builder.Services.Configure<CleanupOptions>(builder.Configuration.GetSection("CleanUp"));
 
 builder.Services.AddAuthorization();
 

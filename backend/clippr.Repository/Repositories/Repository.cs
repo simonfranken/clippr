@@ -29,6 +29,19 @@ public class Repository<T> : IRepository<T> where T : class
         _dbContext.Entry(entity).State = EntityState.Detached;
     }
 
+    public void Delete(List<T> entities)
+    {
+        foreach (var e in entities)
+        {
+            _dbContext.Set<T>().Remove(e);
+        }
+        _dbContext.SaveChanges();
+        foreach (var e in entities)
+        {
+            _dbContext.Entry(e).State = EntityState.Detached;
+        }
+    }
+
     public IQueryable<T> Get(ISpecification<T>? specification = null)
     {
         IQueryable<T> query = _dbContext.Set<T>().AsQueryable();
