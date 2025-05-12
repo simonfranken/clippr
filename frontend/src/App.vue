@@ -11,7 +11,7 @@ const isAuthenticated = computed(() => userStore.user !== undefined);
 
 <template>
   <div class="flex flex-col p-3 h-[100vh]">
-    <div class="mb-7 flex items-center justify-between">
+    <div class="mb-7 flex items-center justify-between s">
       <div class="flex">
         <RouterLink :to="{ name: Routes.Home }">
           <h1 class="text-primary text-2xl font-bold">clippr</h1>
