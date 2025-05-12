@@ -1,4 +1,5 @@
-﻿using clippr.Core.Clip;
+﻿using clippr.Core.AppToken;
+using clippr.Core.Clip;
 
 namespace clippr.Core.User;
 
@@ -15,6 +16,7 @@ public class UserModel
     public string GivenName { get; set; }
     public string Email { get; set; }
     public virtual List<ClipModel> Clips { get; set; } = new List<ClipModel>();
+    public virtual List<AppTokenModel> AppTokens { get; set; } = new List<AppTokenModel>();
     public void UpdateInformation(string givenName, string email)
     {
         GivenName = givenName;

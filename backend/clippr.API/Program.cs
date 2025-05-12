@@ -8,8 +8,9 @@ using clippr.Core.Repository;
 using clippr.Core.User;
 using clippr.Repository;
 using clippr.Repository.Repositories;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 using clippr.API.Background.CleanUp;
+using clippr.Core.AppToken;
+using clippr.API.Authentication.AppToken;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,31 +47,42 @@ builder.Services.AddCors();
 builder.Services.AddSerilog((configuration) =>
     configuration.ReadFrom.Configuration(builder.Configuration));
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-{
-    var config = builder.Configuration.GetSection("Authentication");
-    options.Authority = config["Authority"];
-    options.Audience = config["ClientId"];
-
-    options.Events = new()
+builder.Services.AddAuthentication("MultiScheme")
+    .AddPolicyScheme("MultiScheme", "Multiple Auth", options =>
     {
-        OnAuthenticationFailed = (context) =>
+        options.ForwardDefaultSelector = context =>
         {
-            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger>();
-            logger.LogInformation("Token validation failed. {message}", context.Exception.Message);
-            return Task.CompletedTask;
-        },
-        OnTokenValidated = OnTokenValidatedMiddleware.StoreUser
-    };
-});
+            var authHeader = context.Request.Headers[AppTokenDefaults.HttpHeaderName].ToString();
+
+            if (authHeader != string.Empty)
+            {
+                return AppTokenDefaults.AuthenticationScheme;
+            }
+            return JwtBearerDefaults.AuthenticationScheme;
+        };
+    })
+    .AddJwtBearer(options =>
+    {
+        var config = builder.Configuration.GetSection("Authentication");
+        options.Authority = config["Authority"];
+        options.Audience = config["ClientId"];
+
+        options.Events = new()
+        {
+            OnTokenValidated = OnTokenValidatedMiddleware.StoreUser
+        };
+    })
+    .AddScheme<AppTokenAuthenticationOptions, AppTokenAuthenticationHandler>(AppTokenDefaults.AuthenticationScheme, o => { });
 
 builder.Services.AddDbContext<ClipprDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("Default"), new MariaDbServerVersion(ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Default")))));
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IClipService, ClipService>();
+builder.Services.AddScoped<IAppTokenService, AppTokenService>();
 builder.Services.AddScoped<IRepository<UserModel>, Repository<UserModel>>();
 builder.Services.AddScoped<IRepository<ClipModel>, ClipRepository>();
+builder.Services.AddScoped<IRepository<AppTokenModel>, AppTokenRepository>();
 builder.Services.AddScoped<IAuthenticationHelper, AuthenticationHelper>();
 
 builder.Services.AddHostedService<CleanupService>();

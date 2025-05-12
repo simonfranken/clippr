@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using clippr.Repository;
 
@@ -10,9 +11,11 @@ using clippr.Repository;
 namespace clippr.Repository.Migrations
 {
     [DbContext(typeof(ClipprDbContext))]
-    partial class ClipprDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250512183147_AddsAppToken")]
+    partial class AddsAppToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
