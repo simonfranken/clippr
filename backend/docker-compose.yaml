@@ -8,6 +8,8 @@ services:
       - 5005:5005
     environment:
       - ConnectionStrings__Default=Server=database;Database=clipprDb;Uid=root;
+      - Authentication__Authority=${Authentication__Authority}
+      - Authentication__ClientId=${Authentication__ClientId}
 
   database:
     image: mariadb
