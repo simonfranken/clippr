@@ -3,6 +3,8 @@ import { computed } from 'vue';
 import { useUserStore } from './stores/user';
 import { RouterLink, RouterView } from 'vue-router';
 import { Routes } from './router/routes';
+import { ArrowLeftStartOnRectangleIcon, KeyIcon } from '@heroicons/vue/24/outline';
+import Dialogs from './components/Dialogs.vue';
 
 const userStore = useUserStore();
 const user = computed(() => userStore.user);
@@ -10,6 +12,7 @@ const isAuthenticated = computed(() => userStore.user !== undefined);
 </script>
 
 <template>
+  <Dialogs></Dialogs>
   <div class="flex flex-col p-3 h-[100vh]">
     <div class="mb-7 flex items-center justify-between s">
       <div class="flex">
@@ -30,8 +33,18 @@ const isAuthenticated = computed(() => userStore.user !== undefined);
             tabindex="0"
             class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
           >
-            <li @click="userStore.signOutRedirect"><a>Log out</a></li>
-            <li><a>Settings</a></li>
+            <li @click="userStore.signOutRedirect">
+              <a>
+                <ArrowLeftStartOnRectangleIcon class="size-4"></ArrowLeftStartOnRectangleIcon>
+                Log out
+              </a>
+            </li>
+            <li>
+              <RouterLink :to="{ query: { ...$route.query, appTokenDialog: String(true) } }">
+                <KeyIcon class="size-4"></KeyIcon>
+                App tokens
+              </RouterLink>
+            </li>
           </ul>
         </div>
 

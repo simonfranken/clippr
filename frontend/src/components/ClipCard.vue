@@ -3,7 +3,7 @@ import { ClipType, type Clip } from '@/services/dtos';
 import { ClipboardDocumentCheckIcon, ClipboardDocumentIcon } from '@heroicons/vue/24/outline';
 import { formatDistance } from 'date-fns';
 import { computed, ref, type PropType } from 'vue';
-import { IconTransition, TransitionDirection } from './generic/IconTransition';
+import { IconTransition } from './generic/IconTransition';
 
 const props = defineProps({
   clip: {

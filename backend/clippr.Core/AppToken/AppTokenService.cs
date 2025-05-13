@@ -60,4 +60,21 @@ public class AppTokenService : IAppTokenService
 
         return appToken.User;
     }
+
+    public List<AppTokenModel> GetAllForUser(UserModel user)
+    {
+        return [.. _repository.Get(new AppTokenWithUserSpecification()).Where(x => x.User == user)];
+    }
+
+    public void DeleteToken(Guid id)
+    {
+        var token = _repository.Get().First(x => x.Id == id);
+        _repository.Delete(token);
+    }
+
+    public AppTokenModel GetToken(Guid id)
+    {
+        var token = _repository.Get(new AppTokenWithUserSpecification()).First(x => x.Id == id);
+        return token;
+    }
 }
