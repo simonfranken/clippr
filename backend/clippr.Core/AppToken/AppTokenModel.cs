@@ -7,18 +7,20 @@ public class AppTokenModel
 {
     public Guid Id { get; set; }
 
-    public AppTokenModel(Guid id, DateTimeOffset expirationDate, byte[] salt, byte[] hash)
+    public AppTokenModel(Guid id, DateTimeOffset expirationDate, byte[] salt, byte[] hash, DateTimeOffset createdAt)
     {
         Id = id;
         ExpirationDate = expirationDate;
         Salt = salt;
         Hash = hash;
+        CreatedAt = createdAt;
     }
 
     public AppTokenModel(byte[] secret, byte[] salt, TimeSpan lifetime, UserModel userModel)
     {
         Id = Guid.NewGuid();
         ExpirationDate = DateTimeOffset.Now + lifetime;
+        CreatedAt = DateTimeOffset.Now;
         User = userModel;
         Salt = salt;
 
@@ -35,6 +37,7 @@ public class AppTokenModel
 
     public virtual UserModel User { get; set; }
     public DateTimeOffset ExpirationDate { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
     public byte[] Salt { get; set; }
     public byte[] Hash { get; set; }
     public bool IsExpired => ExpirationDate <= DateTimeOffset.Now;
