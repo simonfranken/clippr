@@ -1,10 +1,13 @@
 {
 	"folders": [
 		{
+			"path": ".github"
+		}
+		{
 			"path": "backend"
 		},
 		{
 			"path": "frontend"
-		}
+		},
 	]
 }
