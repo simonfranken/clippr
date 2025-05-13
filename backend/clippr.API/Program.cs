@@ -88,6 +88,7 @@ builder.Services.AddScoped<IAuthenticationHelper, AuthenticationHelper>();
 builder.Services.AddHostedService<CleanupService>();
 
 builder.Services.Configure<CleanupOptions>(builder.Configuration.GetSection("CleanUp"));
+builder.Services.Configure<AuthenticationOptions>(builder.Configuration.GetSection("Authentication"));
 
 builder.Services.AddAuthorization();
 

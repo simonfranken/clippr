@@ -4,6 +4,7 @@ import { useUserStore } from '@/stores/user';
 
 export const authMiddleware: NavigationGuard = async (to) => {
   const userStore = useUserStore();
+  await userStore.initUserManager();
   const router = useRouter();
 
   await userStore.loadUser();
