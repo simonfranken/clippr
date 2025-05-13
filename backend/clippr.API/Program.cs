@@ -103,6 +103,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+using (var scope = app.Services.CreateScope())
+{
+    using var dbContext = scope.ServiceProvider.GetRequiredService<ClipprDbContext>();
+    dbContext.Database.Migrate();
+}
+
 app.UseHttpsRedirection();
 
 app.MapControllers().WithOpenApi();
