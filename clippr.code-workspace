@@ -4,10 +4,13 @@
 			"path": ".github"
 		},
 		{
+			"path": ".docker"
+		},
+		{
 			"path": "backend"
 		},
 		{
 			"path": "frontend"
 		},
-	]
+	],
 }

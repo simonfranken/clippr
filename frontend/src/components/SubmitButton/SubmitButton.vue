@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch, type PropType } from 'vue';
+import { onMounted, ref, watch, type PropType } from 'vue';
 import { IconTransition, TransitionDirection } from '../generic/IconTransition';
 
 const props = defineProps({
@@ -93,30 +93,15 @@ watch(() => props.failed, updateIcons);
 watch(succeeded, updateIcons);
 watch(awaitingConfirmation, updateIcons);
 onMounted(updateIcons);
-
-const buttonSizeClass = computed(() => {
-  if (props.size === 'default') {
-    return {};
-  }
-  return {
-    [`btn-${props.size}`]: true,
-  };
-});
-
-const loadingSizeClass = computed(() => {
-  if (props.size === 'default') {
-    return '';
-  }
-  return `loading-${props.size}`;
-});
 </script>
 <template>
   <button
     class="btn"
     :class="{
-      ...buttonSizeClass,
       'btn-success': succeeded,
       'btn-outline': outlined && icon == Icons.Default,
+      'btn-sm': props.size === 'sm',
+      'btn-xs': props.size === 'xs',
     }"
     :disabled="submitIsLoading"
     @click="onClick"
@@ -136,7 +121,13 @@ const loadingSizeClass = computed(() => {
         <slot :name="Icons.Failed"></slot>
       </template>
       <template #loading>
-        <span class="loading loading-dots" :class="loadingSizeClass"></span>
+        <span
+          class="loading loading-dots"
+          :class="{
+            'loading-xs': props.size === 'xs',
+            'loading-sm': props.size === 'sm',
+          }"
+        ></span>
       </template>
     </IconTransition>
   </button>

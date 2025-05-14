@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:8ab06772f296ed5f541350334f15d9e2ce84ad4b3ce70c90f2e43db2752c30f6 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:363f595704ae9f9be51db003e49b75f65197b0a44d39cba6f7e2d9b020458604 AS src
 WORKDIR /src
 
 COPY clippr.API/clippr.API.csproj clippr.API/
@@ -8,12 +8,36 @@ COPY clippr.Repository/clippr.Repository.csproj clippr.Repository/
 RUN dotnet restore ./clippr.API/.
 
 COPY . .
+
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:363f595704ae9f9be51db003e49b75f65197b0a44d39cba6f7e2d9b020458604 AS debug
+RUN apt-get update && apt-get install -y unzip curl \
+    && curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l /vsdbg
+
+COPY --from=src /src /src
+
+WORKDIR /app
+RUN dotnet build /src/clippr.API/clippr.API.csproj -c Debug -o /app
+
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true \
+    DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false \
+    DOTNET_EnableDiagnostics=1 \
+    DOTNET_DbgEnable=1
+
+EXPOSE 8080
+    
+ENTRYPOINT ["dotnet", "clippr.API.dll", "--environment", "Development"]
+
+
+FROM src AS publish
+
 WORKDIR /src/clippr.API
 RUN dotnet publish -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:6159cf66274cf52730d7a0c7bb05cf0af94b79370176886ac58286ab6cbb7faf AS final
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:2d386e5e5099095e7dd8f0a884e60a2ac50d42005a8783e842b3af67a2320f72 AS final
 WORKDIR /app
-COPY --from=build /app/publish .
+COPY --from=publish /app/publish .
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 
