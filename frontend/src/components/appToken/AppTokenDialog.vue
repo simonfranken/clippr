@@ -68,7 +68,13 @@ watch(
           disabled
           v-model="createdToken"
         />
-        <SubmitButton class="btn-secondary btn-square" :class="{ invisible: createdToken.length === 0 }" size="sm" @submit="copyToken" outlined>
+        <SubmitButton
+          class="btn-secondary btn-square"
+          :class="{ invisible: createdToken.length === 0 }"
+          size="sm"
+          @submit="copyToken"
+          outlined
+        >
           <template #default>
             <ClipboardDocumentIcon class="size-4"></ClipboardDocumentIcon>
           </template>
@@ -103,7 +109,18 @@ watch(
           @delete="appTokenStore.fetchAppTokens"
         ></AppTokenListItem>
       </ul>
-      <small v-if="appTokenStore.appTokens?.length === 0" class="text-center text-accent"
+      <ul v-else-if="appTokenStore.appTokensAreLoading" class="list -m-4">
+        <AppTokenListItem v-for="x in Array(3).keys()" :key="x" skeleton></AppTokenListItem>
+      </ul>
+      <div
+        v-else-if="appTokenStore.loadingAppTokensFailed"
+        role="alert"
+        class="alert alert-error grow"
+      >
+        <ExclamationTriangleIcon class="size-4"></ExclamationTriangleIcon>
+        <span>Error! Failed loading app tokens.</span>
+      </div>
+      <small v-else-if="appTokenStore.appTokens?.length === 0" class="text-center text-accent"
         >No app tokens have been generated yet</small
       >
     </div>

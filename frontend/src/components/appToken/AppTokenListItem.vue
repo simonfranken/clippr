@@ -55,12 +55,17 @@ const deleteToken = async () => {
 </script>
 <template>
   <li class="list-row">
-    <div class="flex flex-col">
+    <div v-if="skeleton" class="flex flex-col">
+      <div class="skeleton w-32 h-8" />
+    </div>
+    <div v-else class="flex flex-col">
       <small> Created {{ createdAt }} </small>
       <small> Expires in {{ expiresIn }} </small>
     </div>
     <div class="w-full flex justify-end items-center">
+      <div v-if="skeleton" class="size-6 skeleton"></div>
       <SubmitButton
+        v-else
         :submit-is-loading="deleteLoading"
         :failed="deleteFailed"
         @submit="deleteToken"
