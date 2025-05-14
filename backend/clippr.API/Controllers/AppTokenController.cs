@@ -41,7 +41,7 @@ public class AppTokenController : ControllerBase
     {
         var user = _authHelper.GetUser(User);
         var token = _appTokenService.GetToken(id);
-        if (user != token.User)
+        if (!user.Equals(token.User))
         {
             return Forbid();
         }

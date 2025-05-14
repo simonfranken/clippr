@@ -63,7 +63,7 @@ public class AppTokenService : IAppTokenService
 
     public List<AppTokenModel> GetAllForUser(UserModel user)
     {
-        return [.. _repository.Get(new AppTokenWithUserSpecification()).Where(x => x.User == user)];
+        return [.. _repository.Get(new AppTokenWithUserSpecification()).Where(x => x.User.Equals(user))];
     }
 
     public void DeleteToken(Guid id)

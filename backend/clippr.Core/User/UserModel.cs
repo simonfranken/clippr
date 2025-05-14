@@ -1,6 +1,5 @@
 ﻿using clippr.Core.AppToken;
 using clippr.Core.Clip;
-using Microsoft.VisualBasic;
 
 namespace clippr.Core.User;
 
@@ -24,12 +23,12 @@ public class UserModel
         Email = email;
     }
 
-    public static bool operator ==(UserModel a, UserModel b)
+    public override bool Equals(object? obj)
     {
-        return a.Subject == b.Subject;
-    }
-    public static bool operator !=(UserModel a, UserModel b)
-    {
-        return a.Subject != b.Subject;
+        if (obj is UserModel user)
+        {
+            return Subject == user.Subject;
+        }
+        return base.Equals(obj);
     }
 }
