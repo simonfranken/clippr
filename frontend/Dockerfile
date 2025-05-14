@@ -23,7 +23,7 @@ FROM nginx:alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76f
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copy built assets from builder
-COPY --from=publish /app/dist /usr/share/nginx/html
+COPY --from=publish /src/dist /usr/share/nginx/html
 
 # Copy custom NGINX config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
