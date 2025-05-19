@@ -3,7 +3,11 @@ import { onMounted, ref, watch, type PropType } from 'vue';
 import { IconTransition, TransitionDirection } from '../generic/IconTransition';
 
 const props = defineProps({
-  submitIsLoading: {
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  disabled: {
     type: Boolean,
     default: false,
   },
@@ -15,7 +19,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  confirmationRequired: {
+  requiresConfirmation: {
+    type: Boolean,
+    default: false,
+  },
+  succeeded: {
+    type: Boolean,
+  },
+  autoSucceed: {
     type: Boolean,
     default: false,
   },
@@ -36,20 +47,25 @@ enum Icons {
 }
 
 const onClick = () => {
-  if (awaitingConfirmation.value || !props.confirmationRequired) {
+  if (showSuccess.value) {
+    return;
+  }
+  if (awaitingConfirmation.value || !props.requiresConfirmation) {
     emits('submit');
-    setSucceeded();
-  } else if (props.confirmationRequired) {
+    if (props.autoSucceed) {
+      setSucceeded();
+    }
+  } else if (props.requiresConfirmation) {
     awaitingConfirmation.value = true;
     setTimeout(() => (awaitingConfirmation.value = false), 2000);
   }
 };
 
 const awaitingConfirmation = ref(false);
-const succeeded = ref(false);
+const showSuccess = ref(false);
 
 const updateIcons = () => {
-  if (props.submitIsLoading) {
+  if (props.loading) {
     transitionDirection.value = TransitionDirection.Left;
     icon.value = Icons.Loading;
   } else if (awaitingConfirmation.value) {
@@ -62,7 +78,7 @@ const updateIcons = () => {
       transitionDirection.value = TransitionDirection.Left;
     }
     icon.value = Icons.Failed;
-  } else if (succeeded.value) {
+  } else if (showSuccess.value) {
     transitionDirection.value = TransitionDirection.Left;
     icon.value = Icons.Success;
   } else {
@@ -74,14 +90,22 @@ const icon = ref(Icons.Default);
 const transitionDirection = ref(TransitionDirection.Left);
 
 const setSucceeded = () => {
-  succeeded.value = true;
-  setTimeout(() => (succeeded.value = false), 1000);
+  showSuccess.value = true;
+  setTimeout(() => (showSuccess.value = false), 1000);
 };
 
 watch(
-  () => props.submitIsLoading,
+  () => props.succeeded,
   (value) => {
-    if (!value && !props.failed) {
+    if (value) {
+      setSucceeded();
+    }
+  },
+);
+watch(
+  () => props.loading,
+  (value) => {
+    if (!value && props.autoSucceed) {
       setSucceeded();
     }
     updateIcons();
@@ -90,7 +114,7 @@ watch(
 
 watch(() => props.failed, updateIcons);
 watch(() => props.failed, updateIcons);
-watch(succeeded, updateIcons);
+watch(showSuccess, updateIcons);
 watch(awaitingConfirmation, updateIcons);
 onMounted(updateIcons);
 </script>
@@ -98,12 +122,13 @@ onMounted(updateIcons);
   <button
     class="btn"
     :class="{
-      'btn-success': succeeded,
+      'btn-success': showSuccess,
+      '!btn-error': failed,
       'btn-outline': outlined && icon == Icons.Default,
       'btn-sm': props.size === 'sm',
       'btn-xs': props.size === 'xs',
     }"
-    :disabled="submitIsLoading"
+    :disabled="loading || (disabled && !showSuccess)"
     @click="onClick"
   >
     <slot name="label"></slot>

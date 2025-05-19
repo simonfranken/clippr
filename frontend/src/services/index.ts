@@ -6,11 +6,13 @@ import { ConfigurationService } from './configuration';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_ENDPOINT || `${window.location.origin}/api/`,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 instance.interceptors.request.use((config) => {
   const token = useUserStore().user?.access_token;
-  config.headers['Content-Type'] = 'application/json';
   if (token !== undefined) {
     config.headers.Authorization = `Bearer ${token}`;
   }

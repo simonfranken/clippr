@@ -66,10 +66,10 @@ const deleteToken = async () => {
       <div v-if="skeleton" class="size-6 skeleton"></div>
       <SubmitButton
         v-else
-        :submit-is-loading="deleteLoading"
+        :loading="deleteLoading"
         :failed="deleteFailed"
         @submit="deleteToken"
-        confirmation-required
+        requiresConfirmation
         size="xs"
         outlined
         class="btn-square btn-error"

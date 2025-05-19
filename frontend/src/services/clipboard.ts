@@ -16,4 +16,12 @@ export class ClipboardService {
   async createText(content: string): Promise<void> {
     return (await this.axios.post<void>(this.url, content)).data;
   }
+
+  async createFile(content: File): Promise<void> {
+    return (
+      await this.axios.postForm<void>(`${this.url}/file`, {
+        file: content,
+      })
+    ).data;
+  }
 }

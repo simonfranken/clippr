@@ -69,6 +69,7 @@ watch(
           v-model="createdToken"
         />
         <SubmitButton
+          autoSucceed
           class="btn-secondary btn-square"
           :class="{ invisible: createdToken.length === 0 }"
           size="sm"
@@ -86,7 +87,8 @@ watch(
           class="btn-primary"
           size="sm"
           @submit="createAppToken"
-          :submit-is-loading="createIsLoading"
+          :loading="createIsLoading"
+          autoSucceed
           :failed="createHasFailed"
         >
           <template #label>New</template>
