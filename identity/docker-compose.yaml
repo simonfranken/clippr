@@ -1,0 +1,26 @@
+services:
+  identity_debug:
+    profiles:
+      - debug
+    container_name: clippr_identity
+    depends_on:
+      database:
+        condition: service_healthy
+    build:
+      dockerfile: Dockerfile
+      target: debug
+    environment:
+      - ConnectionStrings__Default=Server=database;Database=clipprIdentityDb;Uid=root;
+
+  identity_prod:
+    profiles:
+      - prod
+    container_name: clippr_identity
+    depends_on:
+      database:
+        condition: service_healthy
+    build:
+      dockerfile: Dockerfile
+      target: debug
+    environment:
+      - ConnectionStrings__Default=Server=database;Database=clipprIdentityDb;Uid=root;

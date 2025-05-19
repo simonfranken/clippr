@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "clippr.Identity.API", "clippr.Identity.API\clippr.Identity.API.csproj", "{00B33773-F776-C82F-E0A9-0FDD9A8CAFFF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{00B33773-F776-C82F-E0A9-0FDD9A8CAFFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00B33773-F776-C82F-E0A9-0FDD9A8CAFFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00B33773-F776-C82F-E0A9-0FDD9A8CAFFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00B33773-F776-C82F-E0A9-0FDD9A8CAFFF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A0D79367-58F9-47E1-9816-017FD65CF5A8}
+	EndGlobalSection
+EndGlobal
