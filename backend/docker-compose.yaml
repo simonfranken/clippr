@@ -13,7 +13,7 @@ services:
       - ConnectionStrings__Default=Server=database;Database=clipprDb;Uid=root;
       - Authentication__Authority=${Authentication__Authority}
       - Authentication__ClientId=${Authentication__ClientId}
-      - Hosting__PathBase=/api
+      - Hosting__Url=http://localhost:8080/api
 
   backend_prod:
     profiles:
@@ -29,7 +29,7 @@ services:
       - ConnectionStrings__Default=Server=database;Database=clipprDb;Uid=root;
       - Authentication__Authority=${Authentication__Authority}
       - Authentication__ClientId=${Authentication__ClientId}
-      - Hosting__PathBase=/api
+      - Hosting__Url=http://localhost:8080/api
 
   database:
     image: mariadb

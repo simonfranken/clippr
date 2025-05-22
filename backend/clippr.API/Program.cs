@@ -42,7 +42,7 @@ builder.Services.AddSwaggerGen(o =>
         });
         o.AddServer(new()
         {
-            Url = builder.Configuration.GetValue<string>("Hosting:PathBase")
+            Url = builder.Configuration.GetValue<string>("Hosting:Url")
         });
     }
 );

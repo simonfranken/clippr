@@ -3,7 +3,7 @@ using clippr.IdentityService.API.Models;
 using clippr.IdentityService.Core.JwtKeyProvider;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.AddServer(new()
     {
-        Url = builder.Configuration.GetValue<string>("Hosting:PathBase")
+        Url = builder.Configuration.GetValue<string>("Hosting:Url")
     });
 });
 
@@ -27,7 +27,8 @@ builder.Services.AddIdentity<UserModel, IdentityRole>()
 
 builder.Services.AddSingleton<IJwtKeyProviderService, JwtKeyProviderService>();
 
-builder.Services.AddSerilog();
+builder.Services.AddSerilog((configuration) =>
+    configuration.ReadFrom.Configuration(builder.Configuration));
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
@@ -53,9 +54,23 @@ app.MapGet("/.well-known/jwks", (IJwtKeyProviderService jwtProvider) =>
     return Results.Ok(new { keys = new[] { jwk } });
 });
 
-app.MapControllers();
+app.MapGet("/.well-known/openid-configuration", (HttpContext ctx) =>
+{
+    var origin = ctx.RequestServices.GetRequiredService<IConfiguration>().GetValue<string>("Hosting:Url");
+    return Results.Json(new
+    {
+        issuer = origin,
+        jwks_uri = $"{origin}/.well-known/jwks",
+        authorization_endpoint = $"{origin}/api/auth/authorize",
+        token_endpoint = $"{origin}/api/auth/token",
+        userinfo_endpoint = $"{origin}/api/auth/userinfo",
+        response_types_supported = new[] { "token", "id_token", "code" },
+        subject_types_supported = new[] { "public" },
+        id_token_signing_alg_values_supported = new[] { SecurityAlgorithms.RsaSha256 }
+    });
+});
 
-app.UseSerilogRequestLogging();
+app.MapControllers();
 
 app.UseAuthentication();
 app.UseAuthorization();

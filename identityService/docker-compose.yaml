@@ -11,7 +11,7 @@ services:
       target: debug
     environment:
       - ConnectionStrings__Default=Server=database;Database=clipprIdentityDb;Uid=root;
-      - Hosting__PathBase=/identity
+      - Hosting__Url=http://localhost:8080/identity/
 
   identity_prod:
     profiles:
@@ -25,4 +25,4 @@ services:
       target: debug
     environment:
       - ConnectionStrings__Default=Server=database;Database=clipprIdentityDb;Uid=root;
-      - Hosting__PathBase=/identity
+      - Hosting__Url=http://localhost:8080s/identity/
