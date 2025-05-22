@@ -61,11 +61,7 @@ app.MapGet("/.well-known/openid-configuration", (HttpContext ctx) =>
     {
         issuer = origin,
         jwks_uri = $"{origin}/.well-known/jwks",
-        authorization_endpoint = $"{origin}/api/auth/authorize",
-        token_endpoint = $"{origin}/api/auth/token",
-        userinfo_endpoint = $"{origin}/api/auth/userinfo",
-        response_types_supported = new[] { "token", "id_token", "code" },
-        subject_types_supported = new[] { "public" },
+        token_endpoint = $"{origin}/auth/login",
         id_token_signing_alg_values_supported = new[] { SecurityAlgorithms.RsaSha256 }
     });
 });

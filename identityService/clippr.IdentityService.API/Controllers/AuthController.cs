@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace clippr.IdentityService.API.Controllers;
 
+[Route("auth")]
 public class AuthController : ControllerBase
 {
     private readonly UserManager<UserModel> _userManager;
