@@ -1,10 +1,8 @@
-using System.Text;
 using clippr.IdentityService.API;
 using clippr.IdentityService.API.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using clippr.IdentityService.Core.JwtKeyProvider;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,30 +18,7 @@ builder.Services.AddIdentity<UserModel, IdentityRole>()
     .AddEntityFrameworkStores<IdentityDbContext>()
     .AddDefaultTokenProviders();
 
-// 2️⃣ JWT Configuration
-var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var key = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.RequireHttpsMetadata = false; // Use true in production
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(key)
-    };
-});
+builder.Services.AddSingleton<IJwtKeyProviderService, JwtKeyProviderService>();
 
 builder.Services.AddSerilog();
 
@@ -64,6 +39,12 @@ using (var scope = app.Services.CreateScope())
     using var dbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
     dbContext.Database.Migrate();
 }
+
+app.MapGet("/.well-known/jwks", (IJwtKeyProviderService jwtProvider) =>
+{
+    var jwk = jwtProvider.PublicKey;
+    return Results.Ok(new { keys = new[] { jwk } });
+});
 
 app.MapControllers();
 

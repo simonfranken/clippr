@@ -4,6 +4,8 @@ VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "clippr.IdentityService.API", "clippr.IdentityService.API\clippr.IdentityService.API.csproj", "{62D60E9F-7D7A-F251-AD50-7DE38F3A892C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "clippr.IdentityService.Core", "clippr.IdentityService.Core\clippr.IdentityService.Core.csproj", "{7AF01232-1E87-6937-E104-238E419DB48E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,11 +16,15 @@ Global
 		{62D60E9F-7D7A-F251-AD50-7DE38F3A892C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62D60E9F-7D7A-F251-AD50-7DE38F3A892C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62D60E9F-7D7A-F251-AD50-7DE38F3A892C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AF01232-1E87-6937-E104-238E419DB48E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AF01232-1E87-6937-E104-238E419DB48E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AF01232-1E87-6937-E104-238E419DB48E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AF01232-1E87-6937-E104-238E419DB48E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4CED19AE-7A56-42BF-9B53-B72FB5B672B0}
+		SolutionGuid = {C97885D1-A559-4F0E-A758-7F95F19009BC}
 	EndGlobalSection
 EndGlobal

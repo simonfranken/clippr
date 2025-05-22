@@ -1,14 +1,15 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:363f595704ae9f9be51db003e49b75f65197b0a44d39cba6f7e2d9b020458604 AS src
+FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:69e1e4217e359e7dcb1d6f5fe1fc6e6c26a486ebbf51b696ee02d274e47ffe56 AS src
 WORKDIR /src
 
 COPY clippr.IdentityService.API/clippr.IdentityService.API.csproj clippr.IdentityService.API/
+COPY clippr.IdentityService.Core/clippr.IdentityService.Core.csproj clippr.IdentityService.Core/
 
 RUN dotnet restore ./clippr.IdentityService.API/.
 
 COPY . .
 
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:363f595704ae9f9be51db003e49b75f65197b0a44d39cba6f7e2d9b020458604 AS debug
+FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:69e1e4217e359e7dcb1d6f5fe1fc6e6c26a486ebbf51b696ee02d274e47ffe56 AS debug
 RUN apt-get update && apt-get install -y unzip curl \
     && curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l /vsdbg
 
@@ -33,7 +34,7 @@ WORKDIR /src/clippr.IdentityService.API
 RUN dotnet publish -c Release -o /app/publish
 
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:2d386e5e5099095e7dd8f0a884e60a2ac50d42005a8783e842b3af67a2320f72 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:c149fe7e2be3baccf3cc91e9e6cdcca0ce70f7ca30d5f90796d983ff4f27bd9a AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 

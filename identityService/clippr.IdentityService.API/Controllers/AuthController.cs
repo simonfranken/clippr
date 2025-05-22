@@ -1,8 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using clippr.IdentityService.API.DTOs;
 using clippr.IdentityService.API.Models;
+using clippr.IdentityService.Core.JwtKeyProvider;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -13,10 +13,12 @@ public class AuthController : ControllerBase
 {
     private readonly UserManager<UserModel> _userManager;
     private readonly IConfiguration _config;
-    public AuthController(UserManager<UserModel> userManager, IConfiguration config)
+    private readonly IJwtKeyProviderService _jwtKeyProfider;
+    public AuthController(UserManager<UserModel> userManager, IConfiguration config, IJwtKeyProviderService jwtKeyProfider)
     {
         _userManager = userManager;
         _config = config;
+        _jwtKeyProfider = jwtKeyProfider;
     }
 
     [HttpPost("register")]
@@ -53,8 +55,7 @@ public class AuthController : ControllerBase
             new Claim(ClaimTypes.NameIdentifier, user.Id),
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]!));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var creds = new SigningCredentials(_jwtKeyProfider.SecurityKey, SecurityAlgorithms.RsaSha256);
 
         var expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpiresInMinutes"]!));
 
