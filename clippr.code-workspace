@@ -13,7 +13,7 @@
 			"path": "frontend"
 		},
 		{
-			"path": "identity"
+			"path": "identityService"
 		}
 	],
 }

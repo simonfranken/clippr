@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace clippr.Identity.API.Migrations
+namespace clippr.IdentityService.API.Migrations
 {
     /// <inheritdoc />
     public partial class Init : Migration

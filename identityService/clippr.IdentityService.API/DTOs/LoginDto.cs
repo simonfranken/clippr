@@ -1,6 +1,6 @@
-namespace clippr.Identity.API.DTOs;
+namespace clippr.IdentityService.API.DTOs;
 
-public class RegisterDto
+public class LoginDto
 {
     public string Email { get; set; }
     public string Password { get; set; }

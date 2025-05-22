@@ -1,7 +1,7 @@
 include:
   - ../backend/docker-compose.yaml
   - ../frontend/docker-compose.yaml
-  - ../identity/docker-compose.yaml
+  - ../identityService/docker-compose.yaml
 
 services:
   reverse_proxy_debug:

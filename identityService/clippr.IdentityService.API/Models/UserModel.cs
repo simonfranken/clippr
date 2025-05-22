@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace clippr.Identity.API.Models;
+namespace clippr.IdentityService.API.Models;
 
 public class UserModel : IdentityUser
 {

@@ -1,13 +1,13 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using clippr.Identity.API.DTOs;
-using clippr.Identity.API.Models;
+using clippr.IdentityService.API.DTOs;
+using clippr.IdentityService.API.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
-namespace clippr.Identity.API.Controllers;
+namespace clippr.IdentityService.API.Controllers;
 
 public class AuthController : ControllerBase
 {

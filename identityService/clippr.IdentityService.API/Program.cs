@@ -1,6 +1,6 @@
 using System.Text;
-using clippr.Identity.API;
-using clippr.Identity.API.Models;
+using clippr.IdentityService.API;
+using clippr.IdentityService.API.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

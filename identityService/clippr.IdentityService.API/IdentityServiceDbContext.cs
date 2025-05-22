@@ -1,8 +1,8 @@
-using clippr.Identity.API.Models;
+using clippr.IdentityService.API.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace clippr.Identity.API;
+namespace clippr.IdentityService.API;
 
 public class IdentityDbContext : IdentityDbContext<UserModel>
 {
