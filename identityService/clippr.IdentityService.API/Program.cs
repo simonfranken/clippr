@@ -3,6 +3,7 @@ using clippr.IdentityService.API.Models;
 using clippr.IdentityService.Core.JwtKeyProvider;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddServer(new()
+    {
+        Url = builder.Configuration.GetValue<string>("Hosting:PathBase")
+    });
+});
 
 builder.Services.AddDbContext<IdentityDbContext>(options => options.UseMySql(builder.Configuration.GetConnectionString("Default"), new MariaDbServerVersion(ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Default")))));
 

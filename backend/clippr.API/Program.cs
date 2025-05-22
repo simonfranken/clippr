@@ -40,6 +40,10 @@ builder.Services.AddSwaggerGen(o =>
                 new string[] {}
             }
         });
+        o.AddServer(new()
+        {
+            Url = builder.Configuration.GetValue<string>("Hosting:PathBase")
+        });
     }
 );
 builder.Services.AddCors();
