@@ -11,7 +11,7 @@ services:
       - backend_debug
       - frontend_debug
     ports:
-      - 8080:80
+      - 8080:8080
     volumes:
       - ./nginx:/etc/nginx/:ro
     profiles:
@@ -23,7 +23,7 @@ services:
       - backend_prod
       - frontend_prod
     ports:
-      - 8080:80
+      - 8080:8080
     volumes:
       - ./nginx:/etc/nginx/:ro
     profiles:

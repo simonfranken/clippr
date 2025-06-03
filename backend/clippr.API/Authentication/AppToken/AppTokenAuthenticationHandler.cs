@@ -37,7 +37,7 @@ public class AppTokenAuthenticationHandler : AuthenticationHandler<AppTokenAuthe
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.NameIdentifier, user.Subject),
+            new(ClaimTypes.NameIdentifier, user.Id),
             new(ClaimTypes.GivenName, user.GivenName),
             new(ClaimTypes.Email, user.Email),
         };

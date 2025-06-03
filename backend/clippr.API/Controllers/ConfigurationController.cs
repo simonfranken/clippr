@@ -7,9 +7,9 @@ namespace clippr.API.Controllers;
 [Route("configuration")]
 public class ConfigurationController : ControllerBase
 {
-    private readonly AuthenticationOptions _authenticationOptions;
+    private readonly IdentityServiceOptions _authenticationOptions;
 
-    public ConfigurationController(IOptions<AuthenticationOptions> authenticationOptions)
+    public ConfigurationController(IOptions<IdentityServiceOptions> authenticationOptions)
     {
         _authenticationOptions = authenticationOptions.Value;
     }

@@ -1,14 +1,14 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
-import { User, UserManager, WebStorageStateStore } from 'oidc-client-ts';
+import { User, UserManager, WebStorageStateStore, type UserManagerSettings } from 'oidc-client-ts';
 import { configurationService } from '@/services';
 
-const settings = {
+const settings: Omit<UserManagerSettings, 'authority' | 'client_id'> = {
   redirect_uri: window.location.origin + '/signin-callback',
   userStore: new WebStorageStateStore({ store: window.localStorage }),
   automaticSilentRenew: true,
   loadUserInfo: true,
-  scope: 'profile email openid offline_access',
+  scope: 'profile email openid',
 };
 
 export const useUserStore = defineStore('user', () => {

@@ -11,9 +11,8 @@ services:
       target: debug
     environment:
       - ConnectionStrings__Default=Server=database;Database=clipprDb;Uid=root;
-      - Authentication__Authority=${Authentication__Authority}
-      - Authentication__ClientId=${Authentication__ClientId}
-      - Hosting__Url=http://localhost:8080/api
+      - Hosting__Url=http://clippr_reverse_proxy:8080/api
+      - Authentication__IdentityService__Issuer=http://clippr_reverse_proxy:8080/identity
 
   backend_prod:
     profiles:
@@ -27,9 +26,8 @@ services:
       target: debug
     environment:
       - ConnectionStrings__Default=Server=database;Database=clipprDb;Uid=root;
-      - Authentication__Authority=${Authentication__Authority}
-      - Authentication__ClientId=${Authentication__ClientId}
-      - Hosting__Url=http://localhost:8080/api
+      - Hosting__Url=http://clippr_reverse_proxy:8080/api
+      - Authentication__IdentityService__Issuer=http://clippr_reverse_proxy:8080/identity
 
   database:
     image: mariadb

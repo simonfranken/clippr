@@ -11,6 +11,7 @@ using clippr.Repository.Repositories;
 using clippr.API.Background.CleanUp;
 using clippr.Core.AppToken;
 using clippr.API.Authentication.AppToken;
+using clippr.API.Authentication.Extensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -65,17 +66,7 @@ builder.Services.AddAuthentication("MultiScheme")
             return JwtBearerDefaults.AuthenticationScheme;
         };
     })
-    .AddJwtBearer(options =>
-    {
-        var config = builder.Configuration.GetSection("Authentication");
-        options.Authority = config["Authority"];
-        options.Audience = config["ClientId"];
-
-        options.Events = new()
-        {
-            OnTokenValidated = OnTokenValidatedMiddleware.StoreUser
-        };
-    })
+    .AddIdentityService(builder.Configuration)
     .AddScheme<AppTokenAuthenticationOptions, AppTokenAuthenticationHandler>(AppTokenDefaults.AuthenticationScheme, o => { });
 
 builder.Services.AddDbContext<ClipprDbContext>(options =>
@@ -92,7 +83,7 @@ builder.Services.AddScoped<IAuthenticationHelper, AuthenticationHelper>();
 builder.Services.AddHostedService<CleanupService>();
 
 builder.Services.Configure<CleanupOptions>(builder.Configuration.GetSection("CleanUp"));
-builder.Services.Configure<AuthenticationOptions>(builder.Configuration.GetSection("Authentication"));
+builder.Services.Configure<IdentityServiceOptions>(builder.Configuration.GetSection("Authentication:IdentityService"));
 
 builder.Services.AddAuthorization();
 

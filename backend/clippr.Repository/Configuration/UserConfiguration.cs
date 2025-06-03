@@ -9,7 +9,7 @@ public class UserConfiguration : IEntityTypeConfiguration<UserModel>
     public void Configure(EntityTypeBuilder<UserModel> builder)
     {
         builder
-            .HasKey(x => x.Subject);
+            .HasKey(x => x.Id);
 
         builder
             .HasMany(x => x.Clips)

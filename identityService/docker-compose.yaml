@@ -11,7 +11,10 @@ services:
       target: debug
     environment:
       - ConnectionStrings__Default=Server=database;Database=clipprIdentityDb;Uid=root;
-      - Hosting__Url=http://localhost:8080/identity
+      - Hosting__Url=http://clippr_reverse_proxy:8080/identity
+      - Authentication__ExternalProviders__0__ProviderKey=${Authentication__ExternalProviders__0__ProviderKey}
+      - Authentication__ExternalProviders__0__Issuer=${Authentication__ExternalProviders__0__Issuer}
+      - Authentication__ExternalProviders__0__Audience=${Authentication__ExternalProviders__0__Audience}
 
   identity_prod:
     profiles:
@@ -25,4 +28,7 @@ services:
       target: debug
     environment:
       - ConnectionStrings__Default=Server=database;Database=clipprIdentityDb;Uid=root;
-      - Hosting__Url=http://localhost:8080/identity
+      - Hosting__Url=http://clippr_reverse_proxy:8080/identity
+      - Authentication__ExternalProviders__0__ProviderKey=${Authentication__ExternalProviders__0__ProviderKey}
+      - Authentication__ExternalProviders__0__Issuer=${Authentication__ExternalProviders__0__Issuer}
+      - Authentication__ExternalProviders__0__Audience=${Authentication__ExternalProviders__0__Audience}

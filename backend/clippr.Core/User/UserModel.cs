@@ -5,21 +5,24 @@ namespace clippr.Core.User;
 
 public class UserModel
 {
-    public UserModel(string subject, string givenName, string email)
+    public UserModel(string id, string givenName, string email, string familyName)
     {
-        Subject = subject;
+        Id = id;
         GivenName = givenName;
         Email = email;
+        FamilyName = familyName;
     }
 
-    public string Subject { get; set; }
+    public string Id { get; set; }
     public string GivenName { get; set; }
+    public string FamilyName { get; set; }
     public string Email { get; set; }
     public virtual List<ClipModel> Clips { get; set; } = new List<ClipModel>();
     public virtual List<AppTokenModel> AppTokens { get; set; } = new List<AppTokenModel>();
-    public void UpdateInformation(string givenName, string email)
+    public void UpdateInformation(string givenName, string familyName, string email)
     {
         GivenName = givenName;
+        FamilyName = familyName;
         Email = email;
     }
 
@@ -27,8 +30,13 @@ public class UserModel
     {
         if (obj is UserModel user)
         {
-            return Subject == user.Subject;
+            return Id == user.Id;
         }
         return base.Equals(obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
     }
 }

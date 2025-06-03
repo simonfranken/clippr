@@ -12,26 +12,31 @@ public class UserService : IUserService
         _repository = repository;
     }
 
-    public void CreateUser(string subject, string givenName, string email)
+    public void CreateUser(string id, string givenName, string familyName, string email)
     {
-        var existingUser = _repository.Get().FirstOrDefault(x => x.Subject == subject);
+        var existingUser = _repository.Get().FirstOrDefault(x => x.Id == id);
         if (existingUser != null)
         {
-            throw new InvalidOperationException("A user with the same subject already exists.");
+            throw new InvalidOperationException("A user with the same id already exists.");
         }
-        var user = new UserModel(subject, givenName, email);
+        var user = new UserModel(
+            id: id,
+            givenName: givenName,
+            familyName: familyName,
+            email: email
+        );
         _repository.Add(user);
     }
 
-    public UserModel GetUser(string subject)
+    public UserModel GetUser(string id)
     {
-        var user = _repository.Get().FirstOrDefault(x => x.Subject == subject) ?? throw new KeyNotFoundException();
+        var user = _repository.Get().FirstOrDefault(x => x.Id == id) ?? throw new KeyNotFoundException();
         return user;
     }
 
     public UserModel GetUserWithClips(string subject)
     {
-        var user = _repository.Get(new UserWithClipsSpecification()).FirstOrDefault(x => x.Subject == subject) ?? throw new KeyNotFoundException();
+        var user = _repository.Get(new UserWithClipsSpecification()).FirstOrDefault(x => x.Id == subject) ?? throw new KeyNotFoundException();
         return user;
     }
 

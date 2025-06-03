@@ -1,4 +1,6 @@
 using clippr.IdentityService.API;
+using clippr.IdentityService.API.Authentication;
+using clippr.IdentityService.API.DTOs;
 using clippr.IdentityService.API.Models;
 using clippr.IdentityService.Core.JwtKeyProvider;
 using Microsoft.AspNetCore.Identity;
@@ -27,11 +29,16 @@ builder.Services.AddIdentity<UserModel, IdentityRole>()
 
 builder.Services.AddSingleton<IJwtKeyProviderService, JwtKeyProviderService>();
 
+builder.Services.AddScoped<RegisterDtoValidator>();
+builder.Services.AddScoped<LoginDtoValidator>();
+
 builder.Services.AddSerilog((configuration) =>
     configuration.ReadFrom.Configuration(builder.Configuration));
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
+
+builder.Services.Configure<ExternalProviderOptions>(builder.Configuration.GetSection("Authentication"));
 
 var app = builder.Build();
 
@@ -52,18 +59,6 @@ app.MapGet("/.well-known/jwks", (IJwtKeyProviderService jwtProvider) =>
 {
     var jwk = jwtProvider.PublicKey;
     return Results.Ok(new { keys = new[] { jwk } });
-});
-
-app.MapGet("/.well-known/openid-configuration", (HttpContext ctx) =>
-{
-    var origin = ctx.RequestServices.GetRequiredService<IConfiguration>().GetValue<string>("Hosting:Url");
-    return Results.Json(new
-    {
-        issuer = origin,
-        jwks_uri = $"{origin}/.well-known/jwks",
-        token_endpoint = $"{origin}/auth/login",
-        id_token_signing_alg_values_supported = new[] { SecurityAlgorithms.RsaSha256 }
-    });
 });
 
 app.MapControllers();
