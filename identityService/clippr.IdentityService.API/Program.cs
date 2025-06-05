@@ -2,6 +2,7 @@ using clippr.IdentityService.API;
 using clippr.IdentityService.API.Authentication;
 using clippr.IdentityService.API.DTOs;
 using clippr.IdentityService.API.Models;
+using clippr.IdentityService.Core.IdentityProvider;
 using clippr.IdentityService.Core.JwtKeyProvider;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,7 @@ builder.Services.AddSingleton<IJwtKeyProviderService, JwtKeyProviderService>();
 
 builder.Services.AddScoped<RegisterDtoValidator>();
 builder.Services.AddScoped<LoginDtoValidator>();
+builder.Services.AddScoped<IIdentityProviderService, IdentityProviderService>();
 
 builder.Services.AddSerilog((configuration) =>
     configuration.ReadFrom.Configuration(builder.Configuration));

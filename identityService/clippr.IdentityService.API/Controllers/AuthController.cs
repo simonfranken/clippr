@@ -1,14 +1,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using clippr.IdentityService.API.Authentication;
 using clippr.IdentityService.API.DTOs;
 using clippr.IdentityService.API.Models;
+using clippr.IdentityService.Core.IdentityProvider;
 using clippr.IdentityService.Core.JwtKeyProvider;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Protocols;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 
 namespace clippr.IdentityService.API.Controllers;
@@ -19,17 +16,23 @@ public class AuthController : ControllerBase
     private readonly UserManager<UserModel> _userManager;
     private readonly IConfiguration _config;
     private readonly IJwtKeyProviderService _jwtKeyProfider;
-    private readonly ExternalProviderOptions _externalProviderOptions;
     private readonly RegisterDtoValidator _registerDtoValidator;
     private readonly LoginDtoValidator _loginDtoValidator;
-    public AuthController(UserManager<UserModel> userManager, IConfiguration config, IJwtKeyProviderService jwtKeyProfider, IOptions<ExternalProviderOptions> options, RegisterDtoValidator registerDtoValidator, LoginDtoValidator loginDtoValidator)
+    private readonly IIdentityProviderService _identityProviderService;
+
+    public AuthController(UserManager<UserModel> userManager,
+                          IConfiguration config,
+                          IJwtKeyProviderService jwtKeyProfider,
+                          RegisterDtoValidator registerDtoValidator,
+                          LoginDtoValidator loginDtoValidator,
+                          IIdentityProviderService identityProviderService)
     {
         _userManager = userManager;
         _config = config;
         _jwtKeyProfider = jwtKeyProfider;
-        _externalProviderOptions = options.Value;
         _registerDtoValidator = registerDtoValidator;
         _loginDtoValidator = loginDtoValidator;
+        _identityProviderService = identityProviderService;
     }
 
     [HttpPost("register")]
@@ -40,7 +43,18 @@ public class AuthController : ControllerBase
             return BadRequest();
         }
 
-        var user = dto.ToUserModel();
+        var existingUser = await _userManager.FindByEmailAsync(dto.Email!);
+        if (existingUser != null)
+        {
+            return BadRequest("User with email already exists.");
+        }
+
+        var user = new UserModel(
+            email: dto.Email!,
+            familyName: dto.FamilyName!,
+            givenName: dto.GivenName!
+        );
+
         var result = await _userManager.CreateAsync(user, dto.Password!);
 
         if (!result.Succeeded)
@@ -48,62 +62,69 @@ public class AuthController : ControllerBase
             return BadRequest(result.Errors);
         }
 
-        return Ok(new { Message = "User created successfully" });
+        return Ok(new { Token = GenerateJwtToken(user) });
     }
 
     [HttpPost("external-login")]
-    public async Task<IActionResult> ExternalLogin([FromBody] ExternalLoginDto dto)
+    public async Task<IActionResult> ExternalLogin([FromBody] ExternalLoginEvent dto)
     {
-        var provider = _externalProviderOptions.Get(dto.ProviderKey);
-        if (provider == null)
+        var validationResult = await _identityProviderService.Validate(dto);
+
+        if (!validationResult.Successfull)
         {
-            return BadRequest("Provider does not exist.");
+            return Unauthorized(validationResult.ErrorMessages);
         }
 
-        var handler = new JwtSecurityTokenHandler();
-        var configManager = new ConfigurationManager<OpenIdConnectConfiguration>($"{provider.Issuer}/.well-known/openid-configuration", new OpenIdConnectConfigurationRetriever());
-        var config = await configManager.GetConfigurationAsync();
-        var parameters = new TokenValidationParameters()
+        var linkedUser = await _userManager.FindByLoginAsync(dto.ProviderKey, validationResult.Identity!.Id);
+        if (linkedUser != null)
         {
-            ValidIssuer = config.Issuer,
-            ValidateIssuer = true,
-            ValidAudience = provider.Audience,
-            IssuerSigningKeys = config.SigningKeys
-        };
-
-        ClaimsPrincipal principal;
-        RegisterDto registerDto;
-        try
-        {
-            principal = handler.ValidateToken(dto.IdToken, parameters, out _);
-            registerDto = new()
-            {
-                Email = principal.FindFirstValue(ClaimTypes.Email),
-                FamilyName = principal.FindFirstValue(ClaimTypes.Surname),
-                GivenName = principal.FindFirstValue(ClaimTypes.GivenName),
-            };
-        }
-        catch
-        {
-            return BadRequest("Token validation failed.");
+            return Ok(GenerateJwtToken(linkedUser));
         }
 
-        if (!_registerDtoValidator.Validate(registerDto).IsValid)
+        var existingUser = await _userManager.FindByEmailAsync(validationResult.Identity.Email);
+        if (existingUser != null)
+        {
+            return Unauthorized($"User with email `{validationResult.Identity.Email}` already exists, but is not linked.");
+        }
+
+        var newUser = new UserModel(
+            email: validationResult.Identity!.Email,
+            givenName: validationResult.Identity!.GivenName,
+            familyName: validationResult.Identity!.FamilyName
+        );
+
+        await _userManager.CreateAsync(newUser);
+        await _userManager.AddLoginAsync(newUser, new(dto.ProviderKey, validationResult.Identity.Id, dto.ProviderKey));
+        return Ok(new { Token = GenerateJwtToken(newUser) });
+    }
+
+    [HttpPost("link-external-login")]
+    public async Task<IActionResult> LinkExternalLogin([FromBody] LinkExternalLoginDto dto)
+    {
+        if (!_loginDtoValidator.Validate(dto.LoginDto).IsValid)
         {
             return BadRequest();
         }
-
-        var existingUser = await _userManager.FindByEmailAsync(registerDto.Email!);
-
-        if (existingUser != null)
+        var user = await _userManager.FindByEmailAsync(dto.LoginDto.Email!);
+        if (user == null || !await _userManager.CheckPasswordAsync(user, dto.LoginDto.Password!))
         {
-            return Ok(new { Token = GenerateJwtToken(existingUser) });
+            return Unauthorized();
         }
 
-        var createdUser = registerDto.ToUserModel();
-        await _userManager.CreateAsync(createdUser);
+        var validationResult = await _identityProviderService.Validate(dto.ExternalLoginEvent);
+        if (!validationResult.Successfull)
+        {
+            return Unauthorized();
+        }
 
-        return Ok(new { Token = GenerateJwtToken(createdUser) });
+        var linkedUser = await _userManager.FindByLoginAsync(dto.ExternalLoginEvent.ProviderKey, validationResult.Identity!.Id);
+        if (linkedUser != null)
+        {
+            return BadRequest("Account already linked.");
+        }
+
+        await _userManager.AddLoginAsync(user, new(dto.ExternalLoginEvent.ProviderKey, validationResult.Identity.Id, dto.ExternalLoginEvent.ProviderKey));
+        return Ok(new { Token = GenerateJwtToken(user) });
     }
 
     [HttpPost("login")]

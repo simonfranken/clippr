@@ -167,6 +167,7 @@ namespace clippr.IdentityService.API.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 

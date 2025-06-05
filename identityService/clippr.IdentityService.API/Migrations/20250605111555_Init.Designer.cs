@@ -12,7 +12,7 @@ using clippr.IdentityService.API;
 namespace clippr.IdentityService.API.Migrations
 {
     [DbContext(typeof(IdentityDbContext))]
-    [Migration("20250519195600_Init")]
+    [Migration("20250605111555_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -157,7 +157,7 @@ namespace clippr.IdentityService.API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("clippr.IdentityService.API.UserModel", b =>
+            modelBuilder.Entity("clippr.IdentityService.API.Models.UserModel", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
@@ -170,11 +170,20 @@ namespace clippr.IdentityService.API.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("FamilyName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("GivenName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
@@ -232,7 +241,7 @@ namespace clippr.IdentityService.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("clippr.IdentityService.API.UserModel", null)
+                    b.HasOne("clippr.IdentityService.API.Models.UserModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -241,7 +250,7 @@ namespace clippr.IdentityService.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("clippr.IdentityService.API.UserModel", null)
+                    b.HasOne("clippr.IdentityService.API.Models.UserModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -256,7 +265,7 @@ namespace clippr.IdentityService.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("clippr.IdentityService.API.UserModel", null)
+                    b.HasOne("clippr.IdentityService.API.Models.UserModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -265,7 +274,7 @@ namespace clippr.IdentityService.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("clippr.IdentityService.API.UserModel", null)
+                    b.HasOne("clippr.IdentityService.API.Models.UserModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

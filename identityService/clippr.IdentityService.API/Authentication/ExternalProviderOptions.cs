@@ -1,3 +1,5 @@
+using clippr.IdentityService.Core.IdentityProvider;
+
 namespace clippr.IdentityService.API.Authentication;
 
 public class ExternalProviderOptions
