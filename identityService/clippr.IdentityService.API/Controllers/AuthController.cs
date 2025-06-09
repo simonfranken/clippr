@@ -1,11 +1,13 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using clippr.IdentityService.API.Authentication;
 using clippr.IdentityService.API.DTOs;
 using clippr.IdentityService.API.Models;
 using clippr.IdentityService.Core.IdentityProvider;
 using clippr.IdentityService.Core.JwtKeyProvider;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace clippr.IdentityService.API.Controllers;
@@ -19,13 +21,15 @@ public class AuthController : ControllerBase
     private readonly RegisterDtoValidator _registerDtoValidator;
     private readonly LoginDtoValidator _loginDtoValidator;
     private readonly IIdentityProviderService _identityProviderService;
+    private readonly IOptions<ExternalProviderOptions> _providerOptions;
 
     public AuthController(UserManager<UserModel> userManager,
                           IConfiguration config,
                           IJwtKeyProviderService jwtKeyProfider,
                           RegisterDtoValidator registerDtoValidator,
                           LoginDtoValidator loginDtoValidator,
-                          IIdentityProviderService identityProviderService)
+                          IIdentityProviderService identityProviderService,
+                          IOptions<ExternalProviderOptions> providerOptions)
     {
         _userManager = userManager;
         _config = config;
@@ -33,7 +37,15 @@ public class AuthController : ControllerBase
         _registerDtoValidator = registerDtoValidator;
         _loginDtoValidator = loginDtoValidator;
         _identityProviderService = identityProviderService;
+        _providerOptions = providerOptions;
     }
+
+    [HttpGet("providers")]
+    public ActionResult<List<ExternalProvider>> GetProviders()
+    {
+        return Ok(_providerOptions.Value.ExternalProviders);
+    }
+
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
