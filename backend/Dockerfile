@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:363f595704ae9f9be51db003e49b75f65197b0a44d39cba6f7e2d9b020458604 AS src
+FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:e6a5a8d884609907fa8d468b927df765967f6b22f890ce92bd3ae614ca4ae87e AS src
 WORKDIR /src
 
 COPY clippr.API/clippr.API.csproj clippr.API/
@@ -10,10 +10,13 @@ RUN dotnet restore ./clippr.API/.
 COPY . .
 
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:363f595704ae9f9be51db003e49b75f65197b0a44d39cba6f7e2d9b020458604 AS debug
+FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:e6a5a8d884609907fa8d468b927df765967f6b22f890ce92bd3ae614ca4ae87e AS debug
 RUN apt-get update && apt-get install -y unzip curl \
     && curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l /vsdbg
 
+COPY --from=src /root/.dotnet /root/.dotnet
+COPY --from=src /root/.nuget /root/.nuget
+COPY --from=src /root/.local /root/.local
 COPY --from=src /src /src
 
 WORKDIR /app
@@ -35,7 +38,7 @@ WORKDIR /src/clippr.API
 RUN dotnet publish -c Release -o /app/publish
 
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:2d386e5e5099095e7dd8f0a884e60a2ac50d42005a8783e842b3af67a2320f72 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:d5c0d91bc8fe887684b97d5409056270ed78cd23a5123436e842a8114a64d584 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
