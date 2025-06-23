@@ -1,18 +1,8 @@
 services:
   frontend_debug:
     container_name: clippr_frontend
-    profiles:
-      - debug
     build:
       dockerfile: Dockerfile
       target: debug
     volumes:
       - ./:/src
-
-  frontend_prod:
-    container_name: clippr_frontend
-    profiles:
-      - prod
-    build:
-      dockerfile: Dockerfile
-      target: debug

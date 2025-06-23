@@ -14,17 +14,3 @@ services:
       - 8080:8080
     volumes:
       - ./nginx:/etc/nginx/:ro
-    profiles:
-      - debug
-  reverse_proxy_prod:
-    image: nginx:latest
-    container_name: clippr_reverse_proxy
-    depends_on:
-      - backend_prod
-      - frontend_prod
-    ports:
-      - 8080:8080
-    volumes:
-      - ./nginx:/etc/nginx/:ro
-    profiles:
-      - prod

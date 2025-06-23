@@ -1,22 +1,5 @@
 services:
   backend_debug:
-    profiles:
-      - debug
-    container_name: clippr_backend
-    depends_on:
-      database:
-        condition: service_healthy
-    build:
-      dockerfile: Dockerfile
-      target: debug
-    environment:
-      - ConnectionStrings__Default=Server=database;Database=clipprDb;Uid=root;
-      - Hosting__Url=https://clippr_reverse_proxy:8080/api
-      - Authentication__IdentityService__Issuer=https://clippr_reverse_proxy:8080/identity
-
-  backend_prod:
-    profiles:
-      - prod
     container_name: clippr_backend
     depends_on:
       database:
