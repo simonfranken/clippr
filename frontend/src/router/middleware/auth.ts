@@ -1,29 +1,29 @@
-import { useRouter, type NavigationGuard } from 'vue-router';
+import { type NavigationGuard } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 import { Routes } from '../routes';
-import { useUserStore } from '@/stores/user';
 
 export const authMiddleware: NavigationGuard = async (to) => {
-  const userStore = useUserStore();
-  await userStore.initUserManager();
-  const router = useRouter();
-
-  await userStore.loadUser();
+  const authStore = useAuthStore();
+  if (!authStore.initCompleted) {
+    await authStore.init();
+  }
 
   if (to.name === Routes.SignInCallback) {
-    userStore
-      .signInCallback(to.fullPath)
-      .then(() => {
-        if (userStore.user?.url_state !== undefined) {
-          router.replace(userStore.user.url_state);
-        } else {
-          router.replace({ name: Routes.Home });
-        }
-      })
-      .catch(() => {
-        console.error('Authentication failed, redirecting ...');
-        router.replace({ name: Routes.Home });
-      });
-  } else if (userStore.user === undefined) {
-    userStore.signInRedirect(to.fullPath);
+    authStore.handleExternalAuthenticationCallback(to.query['providerKey'] as string, to.fullPath);
+
+    return {
+      query: {
+        showSignInDialog: 'true',
+        ...to.query,
+      },
+    };
+  }
+
+  if (!authStore.authCompleted && to.query.showSignInDialog !== 'true') {
+    return {
+      query: {
+        showSignInDialog: 'true',
+      },
+    };
   }
 };

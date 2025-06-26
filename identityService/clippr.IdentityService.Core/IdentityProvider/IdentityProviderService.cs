@@ -21,7 +21,8 @@ public class IdentityProviderService(IOptions<List<ExternalProvider>> options) :
 
     private static async Task<TokenValidationParameters> GetValidationParameters(ExternalProvider provider)
     {
-        var configManager = new ConfigurationManager<OpenIdConnectConfiguration>($"{provider.Issuer}/.well-known/openid-configuration", new OpenIdConnectConfigurationRetriever());
+        var configUri = new Uri(new Uri(provider.Issuer, UriKind.Absolute), ".well-known/openid-configuration");
+        var configManager = new ConfigurationManager<OpenIdConnectConfiguration>(configUri.ToString(), new OpenIdConnectConfigurationRetriever());
         var config = await configManager.GetConfigurationAsync();
         return new TokenValidationParameters()
         {

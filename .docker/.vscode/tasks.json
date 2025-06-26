@@ -4,11 +4,10 @@
         {
             "label": "docker compose up",
             "type": "shell",
-            "command": "docker compose --profile ${input:profile} up --build -d",
+            "command": "docker compose up --build -d",
             "problemMatcher": [],
             "presentation": {
-                "reveal": "always",
-                "close": true
+                "reveal": "silent",
             },
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -17,7 +16,7 @@
         {
             "label": "docker compose down",
             "type": "shell",
-            "command": "docker compose --profile ${input:profile} down",
+            "command": "docker compose down",
             "problemMatcher": [],
             "presentation": {
                 "reveal": "always",
@@ -28,16 +27,4 @@
             }
         }
     ],
-    "inputs": [
-        {
-            "id": "profile",
-            "description": "Choose the docker compose profile",
-            "options": [
-                "debug",
-                "prod"
-            ],
-            "default": "debug",
-            "type": "pickString"
-        }
-    ]
 }

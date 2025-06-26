@@ -36,6 +36,6 @@
   --noise: 0;
 }
 
-body {
+.background-pattern {
   background-image: url('./wiggle.svg');
 }

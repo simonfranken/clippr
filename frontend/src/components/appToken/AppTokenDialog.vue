@@ -12,11 +12,9 @@ import {
 import { appTokenService } from '@/services';
 import { SparklesIcon } from '@heroicons/vue/24/solid';
 
-const props = defineProps({
-  opened: {
-    type: Boolean,
-    required: true,
-  },
+const opened = defineModel('opened', {
+  type: Boolean,
+  required: true,
 });
 
 const appTokenStore = useAppTokenStore();
@@ -42,14 +40,11 @@ const copyToken = () => {
 
 const createdToken = ref('');
 
-watch(
-  () => props.opened,
-  async (value) => {
-    if (value) {
-      appTokenStore.fetchAppTokens();
-    }
-  },
-);
+watch(opened, async (value) => {
+  if (value) {
+    appTokenStore.fetchAppTokens();
+  }
+});
 </script>
 <template>
   <div class="modal-box">

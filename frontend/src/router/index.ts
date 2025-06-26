@@ -10,17 +10,21 @@ const router = createRouter({
       path: '/',
       name: Routes.Home,
       component: HomeView,
-      children: [
-        {
-          path: 'signin-callback',
-          component: HomeView,
-          name: Routes.SignInCallback,
-        },
-      ],
+    },
+    {
+      path: '/signin-callback',
+      name: Routes.SignInCallback,
+      component: HomeView,
     },
   ],
 });
 
 router.beforeEach(authMiddleware);
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    fullSize?: boolean;
+  }
+}
 
 export default router;

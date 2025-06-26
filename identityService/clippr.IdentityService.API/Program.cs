@@ -1,12 +1,10 @@
 using clippr.IdentityService.API;
-using clippr.IdentityService.API.Authentication;
 using clippr.IdentityService.API.DTOs;
 using clippr.IdentityService.API.Models;
 using clippr.IdentityService.Core.IdentityProvider;
 using clippr.IdentityService.Core.JwtKeyProvider;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +30,8 @@ builder.Services.AddSingleton<IJwtKeyProviderService, JwtKeyProviderService>();
 
 builder.Services.AddScoped<RegisterDtoValidator>();
 builder.Services.AddScoped<LoginDtoValidator>();
+builder.Services.AddScoped<ExternalLoginDtoValidator>();
+builder.Services.AddScoped<LinkExternalLoginDtoValidator>();
 builder.Services.AddScoped<IIdentityProviderService, IdentityProviderService>();
 
 builder.Services.AddSerilog((configuration) =>
@@ -40,7 +40,9 @@ builder.Services.AddSerilog((configuration) =>
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
-builder.Services.Configure<ExternalProviderOptions>(builder.Configuration.GetSection("Authentication"));
+builder.Services.AddCors();
+
+builder.Services.Configure<List<ExternalProvider>>(builder.Configuration.GetSection("Authentication:ExternalProviders"));
 
 var app = builder.Build();
 
@@ -62,6 +64,8 @@ app.MapGet("/.well-known/jwks", (IJwtKeyProviderService jwtProvider) =>
     var jwk = jwtProvider.PublicKey;
     return Results.Ok(new { keys = new[] { jwk } });
 });
+
+app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.MapControllers();
 

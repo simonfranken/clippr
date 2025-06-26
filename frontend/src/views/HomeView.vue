@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import Clipboard from '@/components/Clipboard.vue';
-import { useUserStore } from '@/stores/user';
+import { useAuthStore } from '@/stores/auth';
+import { storeToRefs } from 'pinia';
 
-const userStore = useUserStore();
+const { authCompleted } = storeToRefs(useAuthStore());
 </script>
 
 <template>
-  <Clipboard v-if="userStore.userIsAuthenticated"></Clipboard>
+  <Clipboard v-if="authCompleted"></Clipboard>
 </template>

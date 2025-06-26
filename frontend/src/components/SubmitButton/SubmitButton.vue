@@ -131,7 +131,7 @@ onMounted(updateIcons);
     :disabled="loading || (disabled && !showSuccess)"
     @click="onClick"
   >
-    <slot name="label"></slot>
+    <slot name="label-left"></slot>
     <IconTransition :icon-key="icon" :transition-direction="transitionDirection">
       <template #default>
         <slot :name="Icons.Default"></slot>
@@ -155,5 +155,6 @@ onMounted(updateIcons);
         ></span>
       </template>
     </IconTransition>
+    <slot name="label-right"></slot>
   </button>
 </template>
