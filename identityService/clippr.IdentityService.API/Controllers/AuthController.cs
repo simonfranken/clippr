@@ -79,7 +79,7 @@ public class AuthController : ControllerBase
             return BadRequest(result.Errors);
         }
 
-        return Ok(new { Token = GenerateJwtToken(user) });
+        return Ok(GenerateJwtToken(user));
     }
 
     [HttpPost("external-login")]
@@ -118,7 +118,7 @@ public class AuthController : ControllerBase
 
         await _userManager.CreateAsync(newUser);
         await _userManager.AddLoginAsync(newUser, new(externalLoginEvent.ProviderKey, validationResult.Identity.Id, dto.ProviderKey));
-        return Ok(new { Token = GenerateJwtToken(newUser) });
+        return Ok(GenerateJwtToken(newUser));
     }
 
     [HttpPost("link-external-login")]
@@ -147,7 +147,7 @@ public class AuthController : ControllerBase
         }
 
         await _userManager.AddLoginAsync(user, new(dto.ProviderKey!, validationResult.Identity.Id, dto.ProviderKey));
-        return Ok(new { Token = GenerateJwtToken(user) });
+        return Ok(GenerateJwtToken(user));
     }
 
     [HttpPost("login")]
@@ -164,7 +164,7 @@ public class AuthController : ControllerBase
         }
 
         var token = GenerateJwtToken(user);
-        return Ok(new { Token = token });
+        return Ok(token);
     }
 
     private string GenerateJwtToken(UserModel user)
@@ -181,7 +181,7 @@ public class AuthController : ControllerBase
 
         var creds = new SigningCredentials(_jwtKeyProfider.SecurityKey, SecurityAlgorithms.RsaSha256);
 
-        var expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpiresInMinutes"]!));
+        var expires = DateTimeOffset.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpiresInMinutes"]!));
 
         var origin = _config.GetValue<string>("Hosting:Url");
 
@@ -189,7 +189,7 @@ public class AuthController : ControllerBase
             issuer: origin,
             audience: jwtSettings["Audience"],
             claims: claims,
-            expires: expires,
+            expires: expires.DateTime,
             signingCredentials: creds
         );
 

@@ -34,6 +34,10 @@ const props = defineProps({
     type: String as PropType<'xs' | 'sm' | 'default'>,
     default: () => 'default',
   },
+  type: {
+    type: String as PropType<'submit' | 'button'>,
+    default: () => 'button',
+  },
 });
 
 const emits = defineEmits(['submit']);
@@ -46,7 +50,10 @@ enum Icons {
   Failed = 'failed',
 }
 
-const onClick = () => {
+const handleClick = (submit: boolean = false) => {
+  if (props.type === 'submit' && !submit) {
+    return;
+  }
   if (showSuccess.value) {
     return;
   }
@@ -120,6 +127,7 @@ onMounted(updateIcons);
 </script>
 <template>
   <button
+    :type="type"
     class="btn"
     :class="{
       'btn-success': showSuccess,
@@ -129,7 +137,8 @@ onMounted(updateIcons);
       'btn-xs': props.size === 'xs',
     }"
     :disabled="loading || (disabled && !showSuccess)"
-    @click="onClick"
+    @click="() => handleClick(false)"
+    @submit="() => handleClick(true)"
   >
     <slot name="label-left"></slot>
     <IconTransition :icon-key="icon" :transition-direction="transitionDirection">

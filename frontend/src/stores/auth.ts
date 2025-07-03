@@ -137,6 +137,20 @@ export const useAuthStore = defineStore('auth', () => {
     setToken();
   };
 
+  const loginIsLoading = ref(false);
+  const loginHasFailed = ref(false);
+  const login = async (email: string, password: string) => {
+    try {
+      loginIsLoading.value = true;
+      setToken(await identityService.value.login(email, password));
+      loginHasFailed.value = false;
+    } catch {
+      loginHasFailed.value = true;
+    } finally {
+      loginIsLoading.value = false;
+    }
+  };
+
   return {
     initIsLoading,
     initFailed,
@@ -151,6 +165,9 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     token,
     logout,
+    login,
+    loginIsLoading,
+    loginHasFailed,
   };
 });
 

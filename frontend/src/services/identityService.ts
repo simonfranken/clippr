@@ -17,4 +17,8 @@ export class IdentityService {
   async externalLogin(externalLogin: ExternalLogin): Promise<string> {
     return (await this.axios.post<string>(`${this.url}/external-login`, externalLogin)).data;
   }
+
+  async login(email: string, password: string): Promise<string> {
+    return (await this.axios.post<string>(`${this.url}/login`, { email, password })).data;
+  }
 }
