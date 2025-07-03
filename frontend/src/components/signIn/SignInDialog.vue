@@ -7,9 +7,8 @@ import {
   CheckBadgeIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/vue/24/outline';
-import { reactive, ref, watch } from 'vue';
+import { reactive, watch } from 'vue';
 import { KeyIcon, UserIcon } from '@heroicons/vue/24/solid';
-import { Field, Form } from 'vee-validate';
 
 const authStore = useAuthStore();
 
