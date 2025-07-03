@@ -38,7 +38,11 @@ const login = () => {
   authStore.login(loginForm.email, loginForm.password);
 };
 
-watch(authCompleted, () => (opened.value = false));
+watch([authCompleted, opened], () => {
+  if (authCompleted.value) {
+    opened.value = false;
+  }
+});
 </script>
 <template>
   <div class="modal-box">
@@ -62,8 +66,7 @@ watch(authCompleted, () => (opened.value = false));
             <template #success>
               <CheckBadgeIcon class="size-4"></CheckBadgeIcon>
             </template>
-            <template #failed
-              >ww
+            <template #failed>
               <ExclamationTriangleIcon class="size-4"></ExclamationTriangleIcon>
             </template>
             <template #label-right> {{ provider.providerKey }} </template>
