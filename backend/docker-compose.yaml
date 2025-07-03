@@ -22,8 +22,8 @@ services:
       - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      start_period: 10s
-      interval: 10s
+      start_period: 3s
+      interval: 1s
       timeout: 5s
       retries: 3
 
