@@ -6,7 +6,7 @@ services:
     image: ghcr.io/simonfranken/clippr-backend:main
     labels:
       - "traefik.http.middlewares.api-stripprefix.stripprefix.prefixes=/api"
-      - "traefik.http.routers.backend.rule=Host(`localhost`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.rule=Host(`${CLIPPR_DOMAIN}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.backend.middlewares=api-stripprefix"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls=true"
@@ -15,12 +15,14 @@ services:
       - Hosting__Url=${CLIPPR_URL}/api
       - Authentication__IdentityService__IssuerPublicUrl=${CLIPPR_URL}/identity
       - Authentication__IdentityService__IssuerInternalUrl=http://identity_service:8080
+    env_file:
+      - .backend.env
 
   identity_service:
     image: ghcr.io/simonfranken/clippr-identity:main
     labels:
       - "traefik.http.middlewares.identity-stripprefix.stripprefix.prefixes=/identity"
-      - "traefik.http.routers.identity.rule=Host(`localhost`) && PathPrefix(`/identity`)"
+      - "traefik.http.routers.identity.rule=Host(`${CLIPPR_DOMAIN}`) && PathPrefix(`/identity`)"
       - "traefik.http.routers.identity.middlewares=identity-stripprefix"
       - "traefik.http.routers.identity.entrypoints=websecure"
       - "traefik.http.routers.identity.tls=true"
@@ -67,7 +69,7 @@ services:
   frontend:
     image: ghcr.io/simonfranken/clippr-frontend:main
     labels:
-      - traefik.http.routers.frontend.rule=Host(`localhost`)
+      - traefik.http.routers.frontend.rule=Host(`${CLIPPR_DOMAIN}`)
       - traefik.http.routers.frontend.entrypoints=websecure
       - traefik.http.routers.frontend.tls=true
 
