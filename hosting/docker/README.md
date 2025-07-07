@@ -18,7 +18,7 @@ Each step is explained in detail in the sections below.
 Clone the repository to your machine:
 
 ```bash
-git clone <repository-url>
+git clone git@github.com:simonfranken/clippr.git
 cd clippr
 ```
 
@@ -126,8 +126,6 @@ You can further customize clippr by adjusting your environment files or `docker-
 
 ## Further Reading
 
-- [clippr Documentation](link-to-your-full-documentation)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
-- [OpenSSL Documentation](https://www.openssl.org/docs/)
 
 ---
