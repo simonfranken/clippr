@@ -58,10 +58,10 @@ services:
     image: "traefik:v3.4"
     container_name: "traefik"
     command:
-     - "--api.insecure=true"
-     - "--providers.docker=true"
-     - "--entrypoints.websecure.address=:443"
-     - "--providers.file.filename=/dynamic/tls.yaml"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.file.filename=/dynamic/tls.yaml"
     ports:
       - "443:443"
       - "8080:8080"
