@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Docker clippr_backend",
+            "name": "Debug Docker docker-backend",
             "type": "coreclr",
             "request": "attach",
             "processName": "dotnet",
@@ -14,7 +14,7 @@
                 "pipeArgs": [
                     "exec",
                     "-i",
-                    "clippr_backend"
+                    "docker-backend-1"
                 ],
                 "debuggerPath": "/vsdbg/vsdbg",
                 "pipeCwd": "${workspaceFolder}",

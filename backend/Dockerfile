@@ -14,9 +14,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:e6a5a8d884609907fa8d468b927df765967
 RUN apt-get update && apt-get install -y unzip curl \
     && curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l /vsdbg
 
-COPY selfsigned.crt /usr/local/share/ca-certificates/
-RUN update-ca-certificates
-
 COPY --from=src /root/.dotnet /root/.dotnet
 COPY --from=src /root/.nuget /root/.nuget
 COPY --from=src /root/.local /root/.local

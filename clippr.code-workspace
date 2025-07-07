@@ -4,9 +4,6 @@
 			"path": ".github"
 		},
 		{
-			"path": ".docker"
-		},
-		{
 			"path": "backend"
 		},
 		{

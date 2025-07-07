@@ -4,7 +4,7 @@
         {
             "label": "docker compose up",
             "type": "shell",
-            "command": "docker compose up --build -d",
+            "command": "docker compose -f docker/docker-compose-dev.yaml up -d",
             "problemMatcher": [],
             "presentation": {
                 "reveal": "silent",
@@ -16,7 +16,7 @@
         {
             "label": "docker compose down",
             "type": "shell",
-            "command": "docker compose down",
+            "command": "docker compose -f docker/docker-compose-dev.yaml down",
             "problemMatcher": [],
             "presentation": {
                 "reveal": "always",
