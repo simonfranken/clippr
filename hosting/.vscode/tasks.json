@@ -4,13 +4,13 @@
         {
             "label": "docker compose up",
             "type": "shell",
-            "command": "docker compose -f docker/docker-compose-dev.yaml up -d",
+            "command": "docker compose -f docker-compose-dev.yaml up --build -d",
             "problemMatcher": [],
             "presentation": {
                 "reveal": "silent",
             },
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}/docker"
             }
         },
         {

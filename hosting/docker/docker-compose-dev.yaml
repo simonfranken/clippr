@@ -4,7 +4,7 @@ services:
       database:
         condition: service_healthy
     build:
-      context: ../backend/
+      context: ../../backend/
       dockerfile: Dockerfile
       target: debug
     labels:
@@ -21,7 +21,7 @@ services:
 
   identity_service:
     build:
-      context: ../identityService
+      context: ../../identityService
       dockerfile: Dockerfile
       target: debug
     labels:
@@ -72,12 +72,15 @@ services:
 
   frontend:
     build:
-      context: ../frontend
+      context: ../../frontend
       dockerfile: Dockerfile
+      target: debug
     labels:
       - traefik.http.routers.frontend.rule=Host(`localhost`)
       - traefik.http.routers.frontend.entrypoints=websecure
       - traefik.http.routers.frontend.tls=true
+    volumes:
+      - ../../frontend:/src
 
 volumes:
   database:

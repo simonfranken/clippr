@@ -1,8 +1,0 @@
-services:
-  frontend_debug:
-    container_name: clippr_frontend
-    build:
-      dockerfile: Dockerfile
-      target: debug
-    volumes:
-      - ./:/src

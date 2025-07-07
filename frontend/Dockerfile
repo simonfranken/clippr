@@ -9,7 +9,7 @@ COPY . .
 FROM src AS debug
 WORKDIR /src
 
-EXPOSE 5173
+EXPOSE 8080
 ENTRYPOINT [ "npm", "run", "dev", "--", "--host", "--port", "8080" ]
 
 FROM src AS publish
