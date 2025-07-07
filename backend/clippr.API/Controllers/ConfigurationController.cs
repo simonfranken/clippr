@@ -18,6 +18,10 @@ public class ConfigurationController : ControllerBase
     [Route("idp")]
     public ActionResult GetIdpConfiguration()
     {
-        return Ok(_authenticationOptions);
+        return Ok(new
+        {
+            Issuer = _authenticationOptions.IssuerPublicUrl,
+            _authenticationOptions.Audience
+        });
     }
 }
