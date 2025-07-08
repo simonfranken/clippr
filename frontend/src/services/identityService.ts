@@ -10,8 +10,15 @@ export class IdentityService {
     this.axios = axios;
   }
 
-  async getProviders(): Promise<ExternalProvider[]> {
-    return (await this.axios.get<ExternalProvider[]>(`${this.url}/providers`)).data;
+  async getProviders(): Promise<{
+    externalProviders: ExternalProvider[];
+    enableInternalAuth: boolean;
+  }> {
+    return (
+      await this.axios.get<{ externalProviders: ExternalProvider[]; enableInternalAuth: boolean }>(
+        `${this.url}/providers`,
+      )
+    ).data;
   }
 
   async externalLogin(externalLogin: ExternalLogin): Promise<string> {

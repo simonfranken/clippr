@@ -19,6 +19,8 @@ interface JwtUser {
 
 export const useAuthStore = defineStore('auth', () => {
   const externalProviders = ref<ExternalProvider[]>();
+  const enableInteralAuth = ref<boolean>();
+
   const identityService = ref<IdentityService>(
     new IdentityService(
       axios.create({
@@ -70,8 +72,8 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       initIsLoading.value = true;
       initIdentityService(await configurationService.getIdpConfiguration());
-      externalProviders.value = await identityService.value.getProviders();
-      restoreToken();
+      ({ externalProviders: externalProviders.value, enableInternalAuth: enableInteralAuth.value } =
+        await identityService.value.getProviders());
       initFailed.value = false;
       initCompleted.value = true;
     } catch {
@@ -168,6 +170,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     loginIsLoading,
     loginHasFailed,
+    enableInteralAuth,
   };
 });
 

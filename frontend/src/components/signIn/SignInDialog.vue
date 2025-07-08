@@ -24,6 +24,7 @@ const {
   authCompleted,
   loginIsLoading,
   loginHasFailed,
+  enableInteralAuth,
 } = storeToRefs(authStore);
 
 const triggerExternalAuthentication = (providerKey: string) => {
@@ -69,12 +70,12 @@ watch([authCompleted, opened], () => {
             <template #failed>
               <ExclamationTriangleIcon class="size-4"></ExclamationTriangleIcon>
             </template>
-            <template #label-right> {{ provider.providerKey }} </template>
+            <template #label-right>{{ provider.providerKey }}</template>
           </SubmitButton>
         </div>
       </div>
-      <div class="divider">or</div>
-      <form class="flex flex-col gap-2 max-w-72" @submit.prevent="login">
+      <div v-if="externalProviders?.length && enableInteralAuth" class="divider">or</div>
+      <form v-if="enableInteralAuth" class="flex flex-col gap-2 max-w-72" @submit.prevent="login">
         <label class="input w-full">
           <UserIcon class="size-3"></UserIcon>
           <input
@@ -95,7 +96,8 @@ watch([authCompleted, opened], () => {
             type="password"
             class="grow"
             placeholder="Password"
-        /></label>
+          />
+        </label>
         <SubmitButton
           type="submit"
           class="btn-primary"

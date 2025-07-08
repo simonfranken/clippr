@@ -23,16 +23,18 @@ public class AuthController : ControllerBase
     private readonly ExternalLoginDtoValidator _externalLoginDtoValidator;
     private readonly IIdentityProviderService _identityProviderService;
     private readonly List<ExternalProvider> _externalProviders;
+    private readonly IConfiguration _configuration;
 
     public AuthController(UserManager<UserModel> userManager,
-                          IConfiguration config,
-                          IJwtKeyProviderService jwtKeyProfider,
-                          RegisterDtoValidator registerDtoValidator,
-                          LoginDtoValidator loginDtoValidator,
-                          IIdentityProviderService identityProviderService,
-                          ExternalLoginDtoValidator externalLoginDtoValidator,
-                          IOptions<List<ExternalProvider>> externalProvidersOptions,
-                          LinkExternalLoginDtoValidator linkExternalLoginDtoValidator)
+        IConfiguration config,
+        IJwtKeyProviderService jwtKeyProfider,
+        RegisterDtoValidator registerDtoValidator,
+        LoginDtoValidator loginDtoValidator,
+        IIdentityProviderService identityProviderService,
+        ExternalLoginDtoValidator externalLoginDtoValidator,
+        IOptions<List<ExternalProvider>> externalProvidersOptions,
+        LinkExternalLoginDtoValidator linkExternalLoginDtoValidator,
+        IConfiguration configuration)
     {
         _userManager = userManager;
         _config = config;
@@ -43,12 +45,17 @@ public class AuthController : ControllerBase
         _externalLoginDtoValidator = externalLoginDtoValidator;
         _externalProviders = externalProvidersOptions.Value;
         _linkExternalLoginDtoValidator = linkExternalLoginDtoValidator;
+        _configuration = configuration;
     }
 
     [HttpGet("providers")]
     public ActionResult<List<ExternalProvider>> GetProviders()
     {
-        return Ok(_externalProviders);
+        return Ok(new
+        {
+            externalProviders = _externalProviders,
+            enableInteralAuth = _configuration.GetRequiredSection("Authentication:EnableInternalAuth").Get<bool>()
+        });
     }
 
 
@@ -98,7 +105,8 @@ public class AuthController : ControllerBase
             return Unauthorized(validationResult.ErrorMessages);
         }
 
-        var linkedUser = await _userManager.FindByLoginAsync(externalLoginEvent.ProviderKey, validationResult.Identity!.Id);
+        var linkedUser =
+            await _userManager.FindByLoginAsync(externalLoginEvent.ProviderKey, validationResult.Identity!.Id);
         if (linkedUser != null)
         {
             return Ok(GenerateJwtToken(linkedUser));
@@ -107,7 +115,8 @@ public class AuthController : ControllerBase
         var existingUser = await _userManager.FindByEmailAsync(validationResult.Identity.Email);
         if (existingUser != null)
         {
-            return Unauthorized($"User with email `{validationResult.Identity.Email}` already exists, but is not linked.");
+            return Unauthorized(
+                $"User with email `{validationResult.Identity.Email}` already exists, but is not linked.");
         }
 
         var newUser = new UserModel(
@@ -117,7 +126,8 @@ public class AuthController : ControllerBase
         );
 
         await _userManager.CreateAsync(newUser);
-        await _userManager.AddLoginAsync(newUser, new(externalLoginEvent.ProviderKey, validationResult.Identity.Id, dto.ProviderKey));
+        await _userManager.AddLoginAsync(newUser,
+            new(externalLoginEvent.ProviderKey, validationResult.Identity.Id, dto.ProviderKey));
         return Ok(GenerateJwtToken(newUser));
     }
 
@@ -128,13 +138,15 @@ public class AuthController : ControllerBase
         {
             return BadRequest();
         }
+
         var user = await _userManager.FindByEmailAsync(dto.Email!);
         if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password!))
         {
             return Unauthorized();
         }
 
-        var validationResult = await _identityProviderService.Validate(new ExternalLoginEvent(dto.Token!, dto.ProviderKey!));
+        var validationResult =
+            await _identityProviderService.Validate(new ExternalLoginEvent(dto.Token!, dto.ProviderKey!));
         if (!validationResult.Successfull)
         {
             return Unauthorized();
@@ -157,6 +169,7 @@ public class AuthController : ControllerBase
         {
             return BadRequest();
         }
+
         var user = await _userManager.FindByEmailAsync(dto.Email!);
         if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password!))
         {
