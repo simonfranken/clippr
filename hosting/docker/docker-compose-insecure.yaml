@@ -1,0 +1,75 @@
+services:
+  backend:
+    depends_on:
+      database:
+        condition: service_healthy
+    image: ghcr.io/simonfranken/clippr-backend:main
+    labels:
+      - "traefik.http.middlewares.api-stripprefix.stripprefix.prefixes=/api"
+      - "traefik.http.routers.backend.rule=Host(`${CLIPPR_DOMAIN}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.middlewares=api-stripprefix"
+      - "traefik.http.routers.backend.entrypoints=web"
+    environment:
+      - ConnectionStrings__Default=Server=database;Database=clipprDb;Uid=root;
+      - Hosting__Url=${CLIPPR_URL}/api
+      - Authentication__IdentityService__IssuerPublicUrl=${CLIPPR_URL}/identity
+      - Authentication__IdentityService__IssuerInternalUrl=http://identity_service:8080
+    env_file:
+      - .backend.env
+
+  identity_service:
+    image: ghcr.io/simonfranken/clippr-identity:main
+    labels:
+      - "traefik.http.middlewares.identity-stripprefix.stripprefix.prefixes=/identity"
+      - "traefik.http.routers.identity.rule=Host(`${CLIPPR_DOMAIN}`) && PathPrefix(`/identity`)"
+      - "traefik.http.routers.identity.middlewares=identity-stripprefix"
+      - "traefik.http.routers.identity.entrypoints=web"
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      - ConnectionStrings__Default=Server=database;Database=clipprIdentityDb;Uid=root;
+      - Hosting__Url=${CLIPPR_URL}/identity
+    env_file:
+      - .identityService.env
+
+  database:
+    image: mariadb
+    volumes:
+      - database:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 3s
+      interval: 1s
+      timeout: 5s
+      retries: 3
+
+  traefik:
+    image: "traefik:v3.4"
+    container_name: "traefik"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  frontend:
+    image: ghcr.io/simonfranken/clippr-frontend:main
+    labels:
+      - traefik.http.routers.frontend.rule=Host(`${CLIPPR_DOMAIN}`)
+      - traefik.http.routers.frontend.entrypoints=web
+
+volumes:
+  database:
+
+networks:
+  default:
+    name: clippr
