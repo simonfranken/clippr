@@ -7,6 +7,8 @@ using clippr.IdentityService.Core.JwtKeyProvider;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.FeatureManagement;
+using Microsoft.FeatureManagement.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace clippr.IdentityService.API.Controllers;
@@ -23,7 +25,7 @@ public class AuthController : ControllerBase
     private readonly ExternalLoginDtoValidator _externalLoginDtoValidator;
     private readonly IIdentityProviderService _identityProviderService;
     private readonly List<ExternalProvider> _externalProviders;
-    private readonly IConfiguration _configuration;
+    private readonly IFeatureManager _featureManager;
 
     public AuthController(UserManager<UserModel> userManager,
         IConfiguration config,
@@ -34,7 +36,7 @@ public class AuthController : ControllerBase
         ExternalLoginDtoValidator externalLoginDtoValidator,
         IOptions<List<ExternalProvider>> externalProvidersOptions,
         LinkExternalLoginDtoValidator linkExternalLoginDtoValidator,
-        IConfiguration configuration)
+        IFeatureManager featureManager)
     {
         _userManager = userManager;
         _config = config;
@@ -45,20 +47,21 @@ public class AuthController : ControllerBase
         _externalLoginDtoValidator = externalLoginDtoValidator;
         _externalProviders = externalProvidersOptions.Value;
         _linkExternalLoginDtoValidator = linkExternalLoginDtoValidator;
-        _configuration = configuration;
+        _featureManager = featureManager;
     }
 
     [HttpGet("providers")]
-    public ActionResult<List<ExternalProvider>> GetProviders()
+    public async Task<ActionResult<List<ExternalProvider>>> GetProviders()
     {
         return Ok(new
         {
             externalProviders = _externalProviders,
-            enableInteralAuth = _configuration.GetRequiredSection("Authentication:EnableInternalAuth").Get<bool>()
+            enableInternalAuth = await _featureManager.IsEnabledAsync("InternalAuth")
         });
     }
 
 
+    [FeatureGate("InternalAuth")]
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
@@ -132,6 +135,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("link-external-login")]
+    [FeatureGate("InternalAuth")]
     public async Task<IActionResult> LinkExternalLogin([FromBody] LinkExternalLoginDto dto)
     {
         if (!_linkExternalLoginDtoValidator.Validate(dto).IsValid)
@@ -163,6 +167,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [FeatureGate("InternalAuth")]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
         if (!_loginDtoValidator.Validate(dto).IsValid)

@@ -19,7 +19,7 @@ interface JwtUser {
 
 export const useAuthStore = defineStore('auth', () => {
   const externalProviders = ref<ExternalProvider[]>();
-  const enableInteralAuth = ref<boolean>();
+  const enableInternalAuth = ref<boolean>();
 
   const identityService = ref<IdentityService>(
     new IdentityService(
@@ -72,8 +72,10 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       initIsLoading.value = true;
       initIdentityService(await configurationService.getIdpConfiguration());
-      ({ externalProviders: externalProviders.value, enableInternalAuth: enableInteralAuth.value } =
-        await identityService.value.getProviders());
+      ({
+        externalProviders: externalProviders.value,
+        enableInternalAuth: enableInternalAuth.value,
+      } = await identityService.value.getProviders());
       initFailed.value = false;
       initCompleted.value = true;
     } catch {
@@ -170,7 +172,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     loginIsLoading,
     loginHasFailed,
-    enableInteralAuth,
+    enableInternalAuth,
   };
 });
 

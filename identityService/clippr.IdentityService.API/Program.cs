@@ -5,6 +5,7 @@ using clippr.IdentityService.Core.IdentityProvider;
 using clippr.IdentityService.Core.JwtKeyProvider;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +37,8 @@ builder.Services.AddScoped<IIdentityProviderService, IdentityProviderService>();
 
 builder.Services.AddSerilog((configuration) =>
     configuration.ReadFrom.Configuration(builder.Configuration));
+
+builder.Services.AddFeatureManagement();
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();

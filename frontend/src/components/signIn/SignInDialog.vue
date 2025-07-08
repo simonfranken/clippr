@@ -24,7 +24,7 @@ const {
   authCompleted,
   loginIsLoading,
   loginHasFailed,
-  enableInteralAuth,
+  enableInternalAuth,
 } = storeToRefs(authStore);
 
 const triggerExternalAuthentication = (providerKey: string) => {
@@ -74,8 +74,8 @@ watch([authCompleted, opened], () => {
           </SubmitButton>
         </div>
       </div>
-      <div v-if="externalProviders?.length && enableInteralAuth" class="divider">or</div>
-      <form v-if="enableInteralAuth" class="flex flex-col gap-2 max-w-72" @submit.prevent="login">
+      <div v-if="externalProviders?.length && enableInternalAuth" class="divider">or</div>
+      <form v-if="enableInternalAuth" class="flex flex-col gap-2 max-w-72" @submit.prevent="login">
         <label class="input w-full">
           <UserIcon class="size-3"></UserIcon>
           <input
