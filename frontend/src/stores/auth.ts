@@ -76,6 +76,7 @@ export const useAuthStore = defineStore('auth', () => {
         externalProviders: externalProviders.value,
         enableInternalAuth: enableInternalAuth.value,
       } = await identityService.value.getProviders());
+      restoreToken();
       initFailed.value = false;
       initCompleted.value = true;
     } catch {
