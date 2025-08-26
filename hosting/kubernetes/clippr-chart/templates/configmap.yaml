@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: clippr-config
+data:
+  backend.env: |
+    {{- range $key, $val := .Values.config.backendEnv }}
+    {{ $key }}={{ $val | quote }}
+    {{- end }}
+  identityService.env: |
+    {{- range $key, $val := .Values.config.identityServiceEnv }}
+    {{ $key }}={{ $val | quote }}
+    {{- end }}
+  frontend.env: |
+    {{- range $key, $val := .Values.config.frontendEnv }}
+    {{ $key }}={{ $val | quote }}
+    {{- end }}

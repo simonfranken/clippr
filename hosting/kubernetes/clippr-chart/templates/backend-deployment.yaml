@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clippr-backend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: clippr-backend
+  template:
+    metadata:
+      labels:
+        app: clippr-backend
+    spec:
+      containers:
+        - name: backend
+          image: {{ .Values.image.backend }}
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: clippr-config
+                items:
+                  - key: backend.env
+                    path: .env
+          env:
+            - name: ConnectionStrings__Default
+              value: "Server={{ .Release.Name }}-mariadb;Database=clipprDb;Uid=root;"
+            - name: Hosting__Url
+              value: "{{ (index .Values.ingress.hosts 0).host }}/api"
+            - name: Authentication__IdentityService__IssuerPublicUrl
+              value: "{{ (index .Values.ingress.hosts 0).host }}/identity"
+            - name: Authentication__IdentityService__IssuerInternalUrl
+              value: "http://clippr-identityservice:8080"

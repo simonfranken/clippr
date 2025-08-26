@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clippr-identityservice
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: clippr-identityservice
+  template:
+    metadata:
+      labels:
+        app: clippr-identityservice
+    spec:
+      containers:
+        - name: identityservice
+          image: {{ .Values.image.identityService }}
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: clippr-config
+                items:
+                  - key: identityService.env
+                    path: .env
+          env:
+            - name: ConnectionStrings__Default
+              value: "Server={{ .Release.Name }}-mariadb;Database=clipprIdentityDb;Uid=root;"
+            - name: Hosting__Url
+              value: "{{ (index .Values.ingress.hosts 0).host }}/identity"

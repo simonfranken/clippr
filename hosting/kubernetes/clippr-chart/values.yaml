@@ -1,0 +1,50 @@
+image:
+  frontend: ghcr.io/simonfranken/clippr-frontend:main
+  backend: ghcr.io/simonfranken/clippr-backend:main
+  identityService: ghcr.io/simonfranken/clippr-identity:main
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  frontendPort: 80
+  backendPort: 8080
+  identityServicePort: 8080
+
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+  hosts:
+    - host: "clippr.example.com"
+      paths:
+        - path: /
+          pathType: Prefix
+          serviceName: frontend
+        - path: /api
+          pathType: Prefix
+          serviceName: backend
+        - path: /identity
+          pathType: Prefix
+          serviceName: identityservice
+  tls:
+    enabled: true
+    secretName: clippr-tls
+
+config:
+  backendEnv: {}
+  identityServiceEnv: {}
+  frontendEnv: {}
+
+mariadb:
+  enabled: true
+  architecture: standalone
+  auth:
+    rootPassword: ""
+    database: clipprDb
+    username: root
+    password: ""
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi

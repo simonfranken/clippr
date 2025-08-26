@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: clippr-backend
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.backendPort }}
+      targetPort: 8080
+      name: http
+  selector:
+    app: clippr-backend

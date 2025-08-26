@@ -1,2 +1,4 @@
 certs/
 *.env
+*.tgz
+Chart.lock

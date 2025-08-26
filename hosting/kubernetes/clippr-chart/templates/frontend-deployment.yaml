@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clippr-frontend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: clippr-frontend
+  template:
+    metadata:
+      labels:
+        app: clippr-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: {{ .Values.image.frontend }}
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: clippr-config
+                items:
+                  - key: frontend.env
+                    path: .env
