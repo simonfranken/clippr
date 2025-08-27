@@ -40,10 +40,9 @@ mariadb:
   enabled: true
   architecture: standalone
   auth:
-    rootPassword: ""
-    database: clipprDb
-    username: root
-    password: ""
+    username: clippr
+    password: "changeme"
+    customUserPrivileges: "ALL PRIVILEGES"
   primary:
     persistence:
       enabled: true

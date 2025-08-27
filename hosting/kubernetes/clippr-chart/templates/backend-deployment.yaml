@@ -25,7 +25,7 @@ spec:
                     path: .env
           env:
             - name: ConnectionStrings__Default
-              value: "Server={{ .Release.Name }}-mariadb;Database=clipprDb;Uid=root;"
+              value: "Server={{ .Release.Name }}-mariadb;Database=clipprDb;Uid={{ .Values.mariadb.auth.database }};Password={{ .Values.mariadb.auth.password}};"
             - name: Hosting__Url
               value: "{{ (index .Values.ingress.hosts 0).host }}/api"
             - name: Authentication__IdentityService__IssuerPublicUrl
