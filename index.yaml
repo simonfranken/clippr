@@ -3,6 +3,20 @@ entries:
   clippr:
   - apiVersion: v2
     appVersion: "1.0"
+    created: "2025-08-27T15:26:11.985660268Z"
+    dependencies:
+    - name: mariadb
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.x.x
+    description: Helm chart for deploying the clippr web clipboard application
+    digest: 72c780ee2d4b4946795a300d37016004f51ad3846e08a8276d841da73cd8d21a
+    name: clippr
+    type: application
+    urls:
+    - https://github.com/simonfranken/clippr/releases/download/clippr-0.1.2/clippr-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: "1.0"
     created: "2025-08-27T15:10:51.333315854Z"
     dependencies:
     - name: mariadb
@@ -29,4 +43,4 @@ entries:
     urls:
     - https://github.com/simonfranken/clippr/releases/download/clippr-0.1.0/clippr-0.1.0.tgz
     version: 0.1.0
-generated: "2025-08-27T15:10:51.333328898Z"
+generated: "2025-08-27T15:26:11.985691487Z"
