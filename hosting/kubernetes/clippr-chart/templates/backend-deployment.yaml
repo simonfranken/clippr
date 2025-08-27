@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: clippr-backend
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: { { .Values.replicaCount } }
   selector:
     matchLabels:
       app: clippr-backend
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: {{ .Values.image.backend }}
+          image: { { .Values.image.backend } }
           ports:
             - containerPort: 8080
           envFrom:
@@ -25,7 +25,7 @@ spec:
                     path: .env
           env:
             - name: ConnectionStrings__Default
-              value: "Server={{ .Release.Name }}-mariadb;Database=clipprDb;Uid={{ .Values.mariadb.auth.database }};Password={{ .Values.mariadb.auth.password}};"
+              value: "Server={{ .Release.Name }}-mariadb;Database=clipprDb;Uid={{ .Values.mariadb.auth.username }};Password={{ .Values.mariadb.auth.password}};"
             - name: Hosting__Url
               value: "{{ (index .Values.ingress.hosts 0).host }}/api"
             - name: Authentication__IdentityService__IssuerPublicUrl
