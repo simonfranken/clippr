@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: clippr-backend
 spec:
-  replicas: { { .Values.replicaCount } }
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: clippr-backend
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: { { .Values.image.backend } }
+          image: {{ .Values.image.backend }}
           ports:
             - containerPort: 8080
           envFrom:
