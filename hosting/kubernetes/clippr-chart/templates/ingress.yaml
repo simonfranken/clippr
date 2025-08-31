@@ -23,21 +23,21 @@ spec:
               service:
                 name: clippr-backend
                 port:
-                  number: {{ .Values.service.backendPort }}
+                  number: {{ $.Values.service.backendPort }}
           - path: /identity(/|$)(.*)
             pathType: Prefix
             backend:
               service:
                 name: clippr-identityservice
                 port:
-                  number: {{ .Values.service.identityServicePort }}
+                  number: {{ $.Values.service.identityServicePort }}
           - path: /
             pathType: Prefix
             backend:
               service:
                 name: clippr-frontend
                 port:
-                  number: {{ .Values.service.frontendPort }}
+                  number: {{ $.Values.service.frontendPort }}
     {{- end }}
   {{- if .Values.ingress.tls.enabled }}
   tls:

@@ -31,6 +31,7 @@ mariadb:
   architecture: standalone
   auth:
     rootPassword: "changeme"
+    password: "changeme"
   primary:
     persistence:
       enabled: true
