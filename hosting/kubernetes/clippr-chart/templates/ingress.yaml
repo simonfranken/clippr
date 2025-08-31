@@ -3,8 +3,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: clippr
-  {{- with .Values.ingress.annotations }}
   annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
@@ -16,15 +17,27 @@ spec:
     - host: {{ .host }}
       http:
         paths:
-          {{- range .paths }}
-          - path: {{ .path }}
-            pathType: {{ .pathType }}
+          - path: /api(/|$)(.*)
+            pathType: Prefix
             backend:
               service:
-                name: clippr-{{ .serviceName }}
+                name: clippr-backend
                 port:
-                  number: 80
-          {{- end }}
+                  number: {{ .Values.service.backendPort }}
+          - path: /identity(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: clippr-identityservice
+                port:
+                  number: {{ .Values.service.identityServicePort }}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: clippr-frontend
+                port:
+                  number: {{ .Values.service.frontendPort }}
     {{- end }}
   {{- if .Values.ingress.tls.enabled }}
   tls:

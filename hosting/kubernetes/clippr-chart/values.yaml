@@ -8,8 +8,8 @@ replicaCount: 1
 service:
   type: ClusterIP
   frontendPort: 80
-  backendPort: 8080
-  identityServicePort: 8080
+  backendPort: 80
+  identityServicePort: 80
 
 ingress:
   enabled: true
@@ -17,16 +17,6 @@ ingress:
   annotations: {}
   hosts:
     - host: "clippr.example.com"
-      paths:
-        - path: /
-          pathType: Prefix
-          serviceName: frontend
-        - path: /api
-          pathType: Prefix
-          serviceName: backend
-        - path: /identity
-          pathType: Prefix
-          serviceName: identityservice
   tls:
     enabled: true
     secretName: clippr-tls
